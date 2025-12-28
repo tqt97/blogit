@@ -13,18 +13,25 @@
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
+        "laravel/horizon": "^5.41",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.16",
+        "barryvdh/laravel-ide-helper": "^3.6",
+        "driftingly/rector-laravel": "^2.1",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
-        "laravel/sail": "^1.41",
+        "laravel/sail": "^1.51",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^4.2",
-        "pestphp/pest-plugin-laravel": "^4.0"
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/phpstan": "^2.1",
+        "tightenco/duster": "^3.3"
     },
     "autoload": {
         "psr-4": {
@@ -62,7 +69,9 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -77,6 +86,21 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "phpstan": [
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "rector-dry-run": [
+            "./vendor/bin/rector process --dry-run"
+        ],
+        "rector": [
+            "./vendor/bin/rector process"
+        ],
+        "pint-test": "vendor/bin/pint --test",
+        "qa": [
+            "@phpstan",
+            "@rector-dry-run",
+            "@pint-test"
         ]
     },
     "extra": {
