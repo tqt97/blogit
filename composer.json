@@ -11,11 +11,13 @@
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",
+        "internachi/modular": "^2.3",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.41",
         "laravel/tinker": "^2.10.1",
-        "laravel/wayfinder": "^0.1.9"
+        "laravel/wayfinder": "^0.1.9",
+        "modules/roles": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
@@ -118,5 +120,14 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "app-modules/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
 }
