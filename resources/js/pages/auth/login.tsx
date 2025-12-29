@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { PasswordInput } from '@/components/password-input';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -65,14 +66,14 @@ export default function Login({
                                         </TextLink>
                                     )}
                                 </div>
-                                <Input
+                                <PasswordInput
                                     id="password"
-                                    type="password"
                                     name="password"
-                                    required
                                     tabIndex={2}
-                                    autoComplete="current-password"
+                                    autoComplete="new-password"
                                     placeholder="Password"
+                                    required
+                                    autoHideWhen={processing}
                                 />
                                 <InputError message={errors.password} />
                             </div>
