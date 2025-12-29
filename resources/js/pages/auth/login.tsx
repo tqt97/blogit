@@ -70,7 +70,7 @@ export default function Login({
                                     id="password"
                                     name="password"
                                     tabIndex={2}
-                                    autoComplete="new-password"
+                                    autoComplete="current-password"
                                     placeholder="Password"
                                     required
                                     autoHideWhen={processing}

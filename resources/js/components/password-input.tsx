@@ -27,8 +27,9 @@ export function PasswordInput({
     useEffect(() => {
         if (autoHideWhen && show) {
             setShow(false);
+            onToggle?.(false);
         }
-    }, [autoHideWhen, show]);
+    }, [autoHideWhen, show, onToggle]);
 
     const toggle = () => {
         setShow((prev) => {
@@ -53,7 +54,6 @@ export function PasswordInput({
                 onClick={toggle}
                 aria-label={show ? hideLabel : showLabel}
                 aria-pressed={show}
-                tabIndex={-1}
                 className={[
                     'absolute top-1/2 right-[1px] -translate-y-1/2 rounded-md p-2',
                     'text-muted-foreground hover:text-foreground',
