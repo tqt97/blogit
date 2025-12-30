@@ -58,11 +58,16 @@ export default function Permissions({
     const { can } = usePermissions();
 
     useEffect(() => {
-        if (flash.message) {
+        if (!flash.message) return;
+
+        toast.success(flash.message);
+
+        const id = setTimeout(() => {
             setOpenAddNewPermissionDialog(false);
             setOpenEditPermissionDialog(false);
-            toast.success(flash.message);
-        }
+        }, 0);
+
+        return () => clearTimeout(id);
     }, [flash.message]);
 
     const {

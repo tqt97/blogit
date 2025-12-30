@@ -2,9 +2,9 @@
 
 namespace Modules\Categories\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
@@ -22,7 +22,7 @@ class Category extends Model
         'parent_id',
         'slug',
         'description',
-        'is_active'
+        'is_active',
     ];
 
     /**
@@ -34,7 +34,7 @@ class Category extends Model
             'slug' => [
                 'source' => 'name',
                 'onUpdate' => true,
-            ]
+            ],
         ];
     }
 

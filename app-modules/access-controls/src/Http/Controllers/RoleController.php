@@ -2,11 +2,11 @@
 
 namespace Modules\AccessControls\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use App\Http\Controllers\Controller;
 
 class RoleController extends Controller
 {
@@ -29,7 +29,7 @@ class RoleController extends Controller
                             ];
                         }),
                     ];
-                })
+                }),
             ]
         );
     }
@@ -39,7 +39,7 @@ class RoleController extends Controller
         return Inertia::render(
             'roles/create',
             [
-                'permissions' => Permission::select('id', 'name', 'description')->get()
+                'permissions' => Permission::select('id', 'name', 'description')->get(),
             ]
         );
     }
@@ -82,7 +82,7 @@ class RoleController extends Controller
                         ];
                     }),
                 ],
-                'permissions' => Permission::select('id', 'name', 'description')->get()
+                'permissions' => Permission::select('id', 'name', 'description')->get(),
             ]
         );
     }
@@ -90,7 +90,7 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $validated = $request->validate([
-            'name' => 'required|string|unique:roles,name,' . $role->id,
+            'name' => 'required|string|unique:roles,name,'.$role->id,
             'description' => 'nullable|string',
             'permissions' => 'array',
             'permissions.*' => 'string|exists:permissions,name',

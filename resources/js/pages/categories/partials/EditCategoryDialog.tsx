@@ -30,7 +30,7 @@ export default function EditCategoryDialog({
         } else {
             reset();
         }
-    }, [category]);
+    }, [category, setData, reset]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

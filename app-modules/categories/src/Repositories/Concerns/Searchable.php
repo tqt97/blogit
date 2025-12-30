@@ -16,10 +16,7 @@ trait Searchable
     /**
      * Find a record by a specific field and value.
      *
-     * @param string $field
-     * @param mixed $value
-     * @param array $with
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @param  mixed  $value
      */
     public function findBy(string $field, $value, array $with = []): ?Model
     {

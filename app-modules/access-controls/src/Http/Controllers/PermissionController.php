@@ -2,11 +2,11 @@
 
 namespace Modules\AccessControls\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
-use App\Http\Controllers\Controller;
 
 class PermissionController extends Controller
 {
@@ -22,6 +22,7 @@ class PermissionController extends Controller
                 'updated_at' => Carbon::parse($permission->updated_at)->format('Y-m-d H:i:s'),
             ];
         });
+
         return Inertia::render('permissions/index', [
             'permissions' => $permissions,
         ]);
@@ -41,7 +42,7 @@ class PermissionController extends Controller
     public function update(Request $request, Permission $permission)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
+            'name' => 'required|string|max:255|unique:permissions,name,'.$permission->id,
         ]);
 
         $permission->update(['name' => $request->name, 'description' => $request->description]);

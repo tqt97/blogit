@@ -19,16 +19,16 @@ Route::middleware(['web', 'auth', 'verified'])->group(function () {
     Route::prefix('permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index'])->name('permissions.index')->can('view_permissions');
         Route::post('/', [PermissionController::class, 'store'])->name('permissions.store')->can('create_permissions');
-        Route::put('/{permission}', [PermissionController::class, 'update'])->name('permissions.update')->can('edit_permissions');
-        Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy')->can('delete_permissions');
+        Route::put('{permission}', [PermissionController::class, 'update'])->name('permissions.update')->can('edit_permissions');
+        Route::delete('{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy')->can('delete_permissions');
     });
     Route::prefix('roles')->group(function () {
         Route::get('/', [RoleController::class, 'index'])->name('roles.index')->can('view_roles');
         Route::post('/', [RoleController::class, 'store'])->name('roles.store')->can('create_roles');
-        Route::get('/create', [RoleController::class, 'create'])->name('roles.create')->can('create_roles');
-        Route::get('/{role}', [RoleController::class, 'show'])->name('roles.show')->can('view_roles');
-        Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit')->can('edit_roles');
-        Route::put('/{role}', [RoleController::class, 'update'])->name('roles.update')->can('edit_roles');
-        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->can('delete_roles');
+        Route::get('create', [RoleController::class, 'create'])->name('roles.create')->can('create_roles');
+        Route::get('{role}', [RoleController::class, 'show'])->name('roles.show')->can('view_roles');
+        Route::get('{role}/edit', [RoleController::class, 'edit'])->name('roles.edit')->can('edit_roles');
+        Route::put('{role}', [RoleController::class, 'update'])->name('roles.update')->can('edit_roles');
+        Route::delete('{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->can('delete_roles');
     });
 });

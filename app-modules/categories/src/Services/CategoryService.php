@@ -22,8 +22,7 @@ class CategoryService
     /**
      * Get all category with params
      *
-     * @param bool $onlyRoot
-     * @return LengthAwarePaginator
+     * @param  bool  $onlyRoot
      */
     public function getAll($onlyRoot = false): LengthAwarePaginator
     {
@@ -32,9 +31,6 @@ class CategoryService
 
     /**
      * Store a new category
-     *
-     * @param array $data
-     * @return void
      */
     public function store(array $data): void
     {
@@ -43,10 +39,6 @@ class CategoryService
 
     /**
      * Update an existing category
-     *
-     * @param int $id
-     * @param array $data
-     * @return void
      */
     public function update(int $id, array $data): void
     {
@@ -55,9 +47,6 @@ class CategoryService
 
     /**
      * Delete an existing category
-     *
-     * @param int $id
-     * @return void
      */
     public function delete(int $id): void
     {

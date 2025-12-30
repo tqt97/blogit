@@ -2,6 +2,7 @@
 
 namespace Modules\Categories\Repositories;
 
+use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Categories\Models\Category;
 
@@ -9,15 +10,11 @@ class CategoryRepository
 {
     /**
      * The Category model instance.
-     *
-     * @var Category
      */
     protected Category $model;
 
     /**
      * CategoryRepository constructor.
-     *
-     * @param Category $model
      */
     public function __construct(Category $model)
     {
@@ -26,9 +23,6 @@ class CategoryRepository
 
     /**
      * Get all category by params
-     *
-     * @param $onlyRoot
-     * @return LengthAwarePaginator
      */
     public function getAll($onlyRoot = false): LengthAwarePaginator
     {
@@ -37,14 +31,12 @@ class CategoryRepository
         if ($onlyRoot) {
             $query->whereNull('parent_id');
         }
+
         return $query->orderBy('id', 'desc')->paginate(10);
     }
 
     /**
      * Find Category by ID
-     *
-     * @param int $id
-     * @return Category|null
      */
     public function find(int $id): ?Category
     {
@@ -54,8 +46,7 @@ class CategoryRepository
     /**
      * Create new Category
      *
-     * @param array<string, mixed> $data
-     * @return Category
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): Category
     {
@@ -65,28 +56,26 @@ class CategoryRepository
     /**
      * Update category by ID
      *
-     * @param int   $id
-     * @param array<string, mixed> $data
-     * @return bool
+     * @param  array<string, mixed>  $data
      */
     public function update(int $id, array $data): bool
     {
         $category = $this->model->findOrFail($id);
+
         return $category->update($data);
     }
 
     /**
      * Delete category by ID
      *
-     * @param int $id
-     * @return bool|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(int $id): ?bool
     {
         $category = $this->model->findOrFail($id);
         $category->children()->delete();
+
         return $category->delete();
     }
 }

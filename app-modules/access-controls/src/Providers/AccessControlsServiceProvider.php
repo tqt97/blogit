@@ -10,6 +10,6 @@ class AccessControlsServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/access-controls-routes.php');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/access-controls-routes.php');
     }
 }
