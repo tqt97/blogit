@@ -12,9 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Comment extends Model
 {
-    /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory;
-
     use SoftDeletes;
 
     protected $fillable = [
@@ -46,6 +44,7 @@ class Comment extends Model
         return $this->morphMany(Like::class, 'likeable');
     }
 
+    // #[\Illuminate\Database\Eloquent\Attributes\Scope]
     #[\Illuminate\Database\Eloquent\Attributes\Scope]
     protected function root(Builder $query): Builder
     {

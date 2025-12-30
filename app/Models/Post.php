@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,9 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory;
-
     use SoftDeletes;
 
     protected $fillable = [
@@ -64,8 +61,7 @@ class Post extends Model
         return $this->morphMany(Like::class, 'likeable');
     }
 
-    #[Scope]
-    protected function published(Builder $query): Builder
+    protected function applyPublishedConstraint(Builder $query): Builder
     {
         return $query
             ->where('status', 'published')
@@ -73,12 +69,18 @@ class Post extends Model
             ->where('published_at', '<=', now());
     }
 
-    #[Scope]
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published(Builder $query): Builder
+    {
+        return $this->applyPublishedConstraint($query);
+    }
+
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
     protected function latestPublished(Builder $query): Builder
     {
-        return $query
-            ->published()
-            ->orderByDesc('published_at')
+        return $this
+            ->applyPublishedConstraint($query)
+            ->latest('published_at')
             ->orderByDesc('id');
     }
 }
