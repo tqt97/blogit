@@ -1,0 +1,24 @@
+{
+	"name": "modules/access-controls",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Modules\\AccessControls\\": "src/",
+			"Modules\\AccessControls\\Tests\\": "tests/",
+			"Modules\\AccessControls\\Database\\Factories\\": "database/factories/",
+			"Modules\\AccessControls\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Modules\\AccessControls\\Providers\\AccessControlsServiceProvider"
+			]
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"name": "modules/categories",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {
+		"cviebrock/eloquent-sluggable": "^12.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Modules\\Categories\\": "src/",
+			"Modules\\Categories\\Tests\\": "tests/",
+			"Modules\\Categories\\Database\\Factories\\": "database/factories/",
+			"Modules\\Categories\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Modules\\Categories\\Providers\\CategoriesServiceProvider"
+			]
+		}
+	}
+}
