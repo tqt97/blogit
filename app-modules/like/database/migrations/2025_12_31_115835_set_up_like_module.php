@@ -15,7 +15,6 @@ return new class extends Migration
 
             $table->unique(['user_id', 'likeable_type', 'likeable_id']);
             $table->index('user_id');
-            $table->index(['likeable_type', 'likeable_id']);
         });
     }
 
