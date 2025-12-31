@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b53c796c85cf6d72742f5bb23c4a38c8",
+    "content-hash": "4db7567f48f72f52c455920bde69880f",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3243,6 +3243,134 @@
             "time": "2025-09-14T11:18:39+00:00"
         },
         {
+            "name": "modules/category",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/category",
+                "reference": "c7d0c3708794b1b5783f51af462bc14d6c159ff1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Category\\Providers\\CategoryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Category\\": "src/",
+                    "Modules\\Category\\Tests\\": "tests/",
+                    "Modules\\Category\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Category\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "modules/comment",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/comment",
+                "reference": "58a40e8685ff3918c9a416231ccef221b7701b04"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Comment\\Providers\\CommentServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Comment\\": "src/",
+                    "Modules\\Comment\\Tests\\": "tests/",
+                    "Modules\\Comment\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Comment\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "modules/like",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/like",
+                "reference": "0fcf626d183aa7401fc015a399098fdb7b7d2423"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Like\\Providers\\LikeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Like\\": "src/",
+                    "Modules\\Like\\Tests\\": "tests/",
+                    "Modules\\Like\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Like\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "modules/post",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/post",
+                "reference": "1404c8e69a5b7215bcec495a3d8034f3154c9d12"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Post\\Providers\\PostServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Post\\": "src/",
+                    "Modules\\Post\\Tests\\": "tests/",
+                    "Modules\\Post\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Post\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "modules/roles",
             "version": "1.0",
             "dist": {
@@ -3264,6 +3392,38 @@
                     "Modules\\Roles\\Tests\\": "tests/",
                     "Modules\\Roles\\Database\\Factories\\": "database/factories/",
                     "Modules\\Roles\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "modules/tag",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/tag",
+                "reference": "e487657c2457203801ed2cbee94aac110cce6eb1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Tag\\Providers\\TagServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Tag\\": "src/",
+                    "Modules\\Tag\\Tests\\": "tests/",
+                    "Modules\\Tag\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Tag\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

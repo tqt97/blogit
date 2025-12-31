@@ -17,7 +17,12 @@
         "laravel/horizon": "^5.41",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
-        "modules/roles": "*"
+        "modules/category": "*",
+        "modules/comment": "*",
+        "modules/like": "*",
+        "modules/post": "*",
+        "modules/roles": "*",
+        "modules/tag": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
