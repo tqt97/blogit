@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4db7567f48f72f52c455920bde69880f",
+    "content-hash": "32b65db6d555edde8bb499c72e4bd38c",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3403,6 +3403,38 @@
             }
         },
         {
+            "name": "modules/shared",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/shared",
+                "reference": "0f76a4b22d2607620d7b2d002c973f51528d56d4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Shared\\Providers\\SharedServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Shared\\": "src/",
+                    "Modules\\Shared\\Tests\\": "tests/",
+                    "Modules\\Shared\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Shared\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "modules/tag",
             "version": "1.0",
             "dist": {
@@ -3414,7 +3446,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Modules\\Tag\\Providers\\TagServiceProvider"
+                        "Modules\\Tag\\Infrastructure\\Providers\\TagServiceProvider"
                     ]
                 }
             },

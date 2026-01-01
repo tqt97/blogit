@@ -22,6 +22,7 @@
         "modules/like": "*",
         "modules/post": "*",
         "modules/roles": "*",
+        "modules/shared": "*",
         "modules/tag": "*"
     },
     "require-dev": {

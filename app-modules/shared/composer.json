@@ -1,0 +1,24 @@
+{
+	"name": "modules/shared",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Modules\\Shared\\": "src/",
+			"Modules\\Shared\\Tests\\": "tests/",
+			"Modules\\Shared\\Database\\Factories\\": "database/factories/",
+			"Modules\\Shared\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Modules\\Shared\\Providers\\SharedServiceProvider"
+			]
+		}
+	}
+}

@@ -4,10 +4,13 @@ namespace App\Providers;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
+use Modules\Comment\Models\Comment;
+use Modules\Post\Models\Post;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,5 +47,10 @@ class AppServiceProvider extends ServiceProvider
                 'exception' => $event->exception->getMessage(),
             ]);
         });
+
+        Relation::enforceMorphMap([
+            'post' => Post::class,
+            'comment' => Comment::class,
+        ]);
     }
 }

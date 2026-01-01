@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\Tag\Models;
+namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Modules\Post\Models\Post;
 
-class Tag extends Model
+class TagModel extends Model
 {
     /** @use HasFactory<\Database\Factories\TagFactory> */
     use HasFactory;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Tag\Providers;
+namespace Modules\Shared\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class TagServiceProvider extends ServiceProvider
+class SharedServiceProvider extends ServiceProvider
 {
     public function register(): void {}
 
