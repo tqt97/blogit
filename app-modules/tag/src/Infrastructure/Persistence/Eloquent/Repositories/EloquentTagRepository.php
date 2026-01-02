@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Repositories;
 
-use Modules\Tag\Domain\Repositories\TagRepositoryInterface;
+use LogicException;
 use Modules\Tag\Domain\Entities\Tag;
+use Modules\Tag\Domain\Repositories\TagRepositoryInterface;
 use Modules\Tag\Domain\ValueObjects\TagId;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Mappers\TagMapper;
@@ -19,7 +21,7 @@ final class EloquentTagRepository implements TagRepositoryInterface
         // DDD thuần có thể generate UUID; với auto-increment thì identity đến sau khi save.
         // Trả "fake" ở đây không hợp. Thực tế với MySQL auto id, bạn có thể bỏ nextIdentity().
         // Mình giữ để đúng interface; có thể throw hoặc chuyển sang UUID.
-        throw new \LogicException('nextIdentity is not supported with auto-increment ids.');
+        throw new LogicException('nextIdentity is not supported with auto-increment ids.');
     }
 
     public function save(Tag $tag): void
@@ -42,6 +44,7 @@ final class EloquentTagRepository implements TagRepositoryInterface
     public function getById(TagId $id): ?Tag
     {
         $model = TagModel::query()->find($id->value());
+
         return $model ? $this->mapper->toDomain($model) : null;
     }
 

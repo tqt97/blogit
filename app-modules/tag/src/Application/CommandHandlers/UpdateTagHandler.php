@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Tag\Application\CommandHandlers;
@@ -11,6 +12,7 @@ use Modules\Tag\Domain\Rules\UniqueTagSlugRule;
 use Modules\Tag\Domain\ValueObjects\TagId;
 use Modules\Tag\Domain\ValueObjects\TagName;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
+use RuntimeException;
 
 final class UpdateTagHandler
 {
@@ -24,8 +26,8 @@ final class UpdateTagHandler
         $id = new TagId($cmd->id);
 
         $tag = $this->repo->getById($id);
-        if (!$tag) {
-            throw new \RuntimeException('Tag not found.');
+        if (! $tag) {
+            throw new RuntimeException('Tag not found.');
         }
 
         $name = new TagName($cmd->name);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Mappers;
@@ -22,7 +23,7 @@ final class TagMapper
 
     public function toPersistence(Tag $tag, ?TagModel $model = null): TagModel
     {
-        $model ??= new TagModel();
+        $model ??= new TagModel;
 
         $model->name = $tag->name()->value();
         $model->slug = $tag->slug()->value();

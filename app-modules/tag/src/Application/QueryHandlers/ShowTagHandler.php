@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Tag\Application\QueryHandlers;
@@ -11,7 +12,8 @@ final class ShowTagHandler
 {
     public function handle(ShowTagQuery $q): ?TagDTO
     {
-        $m = TagModel::query()->select(['id','name','slug'])->find($q->id);
-        return $m ? new TagDTO((int)$m->id, (string)$m->name, (string)$m->slug) : null;
+        $m = TagModel::query()->select(['id', 'name', 'slug'])->find($q->id);
+
+        return $m ? new TagDTO((int) $m->id, (string) $m->name, (string) $m->slug) : null;
     }
 }

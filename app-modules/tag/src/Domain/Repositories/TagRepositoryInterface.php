@@ -2,7 +2,6 @@
 
 namespace Modules\Tag\Domain\Repositories;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\ValueObjects\TagId;
 use Modules\Tag\Domain\ValueObjects\TagSlug;

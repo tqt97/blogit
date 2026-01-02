@@ -4,12 +4,12 @@ namespace Modules\Tag\Presentation\Controllers\Admin;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Modules\Tag\Application\Commands\CreateTagCommand;
-use Modules\Tag\Application\Commands\UpdateTagCommand;
-use Modules\Tag\Application\Commands\DeleteTagCommand;
 use Modules\Tag\Application\CommandHandlers\CreateTagHandler;
-use Modules\Tag\Application\CommandHandlers\UpdateTagHandler;
 use Modules\Tag\Application\CommandHandlers\DeleteTagHandler;
+use Modules\Tag\Application\CommandHandlers\UpdateTagHandler;
+use Modules\Tag\Application\Commands\CreateTagCommand;
+use Modules\Tag\Application\Commands\DeleteTagCommand;
+use Modules\Tag\Application\Commands\UpdateTagCommand;
 use Modules\Tag\Application\Queries\ListTagsQuery;
 use Modules\Tag\Application\Queries\ShowTagQuery;
 use Modules\Tag\Application\QueryHandlers\ListTagsHandler;
@@ -53,7 +53,7 @@ final class TagController
     public function edit(int $tag, ShowTagHandler $handler): View
     {
         $tagData = $handler->handle(new ShowTagQuery($tag));
-        abort_if(!$tagData, 404);
+        abort_if(! $tagData, 404);
 
         return view('tag::admin.tags.edit', ['tag' => $tagData]);
     }

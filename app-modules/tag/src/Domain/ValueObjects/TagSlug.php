@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Tag\Domain\ValueObjects;
+
+use InvalidArgumentException;
 
 final class TagSlug
 {
@@ -9,7 +12,7 @@ final class TagSlug
     {
         $value = trim($value);
         if ($value === '') {
-            throw new \InvalidArgumentException('Tag slug cannot be empty.');
+            throw new InvalidArgumentException('Tag slug cannot be empty.');
         }
         $this->value = $value;
     }

@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Tag\Domain\ValueObjects;
+
+use InvalidArgumentException;
 
 final class TagName
 {
@@ -9,7 +12,7 @@ final class TagName
     {
         $value = trim($value);
         if ($value === '') {
-            throw new \InvalidArgumentException('Tag name cannot be empty.');
+            throw new InvalidArgumentException('Tag name cannot be empty.');
         }
         $this->value = $value;
     }

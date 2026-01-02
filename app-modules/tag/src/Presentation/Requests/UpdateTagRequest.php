@@ -23,7 +23,7 @@ class UpdateTagRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'slug' => ['required', 'string', 'unique:tags,slug' . $this->route('tag')->id],
+            'slug' => ['required', 'string', 'unique:tags,slug'.$this->route('tag')->id],
         ];
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Adapters;
 
@@ -10,13 +12,14 @@ final class EloquentTagReader implements TagReaderInterface
     public function filterExistingIds(array $ids): array
     {
         $ids = array_values(array_unique(array_map('intval', $ids)));
-        if ($ids === [])
+        if ($ids === []) {
             return [];
+        }
 
         return Tag::query()
             ->whereIn('id', $ids)
             ->pluck('id')
-            ->map(static fn($id) => (int) $id)
+            ->map(static fn ($id) => (int) $id)
             ->all();
     }
 
@@ -26,7 +29,7 @@ final class EloquentTagReader implements TagReaderInterface
             ->select(['id', 'name'])
             ->orderBy('name')
             ->get()
-            ->map(static fn($t) => [
+            ->map(static fn ($t) => [
                 'id' => (int) $t->id,
                 'label' => (string) $t->name,
             ])
