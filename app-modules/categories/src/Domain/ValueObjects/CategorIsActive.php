@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\Categories\Domain\ValueObjects;
 
-
 final class CategoryIsActive
 {
     private function __construct(

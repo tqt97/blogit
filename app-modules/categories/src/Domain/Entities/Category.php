@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Categories\Domain\Entities;
 
+use LogicException;
 use Modules\Categories\Domain\ValueObjects\CategoryDescription;
 use Modules\Categories\Domain\ValueObjects\CategoryId;
 use Modules\Categories\Domain\ValueObjects\CategoryIsActive;
@@ -30,7 +31,7 @@ final class Category
     public function id(): ?CategoryId
     {
         return $this->id
-            ?? throw new \LogicException('Tag must have an ID');;
+            ?? throw new LogicException('Tag must have an ID');
     }
 
     public function name(): CategoryName
@@ -76,13 +77,11 @@ final class Category
 
     /**
      * Mapping function to set the ID after creation
-     *
-     * @param CategoryId $id
      */
     public function setId(CategoryId $id): void
     {
         if ($this->id !== null) {
-            throw new \LogicException('Category ID is already set.');
+            throw new LogicException('Category ID is already set.');
         }
 
         $this->id = $id;

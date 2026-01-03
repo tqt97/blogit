@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Modules\Categories\Infrastructure\Repositories;
 
-use Modules\Categories\Infrastructure\Persistence\Eloquents\Models\CategoryModel;
 use Modules\Categories\Domain\Entities\Category;
 use Modules\Categories\Domain\Interfaces\CategoryRepositoryInterface;
 use Modules\Categories\Domain\ValueObjects\CategoryId;
+use Modules\Categories\Infrastructure\Persistence\Eloquents\Models\CategoryModel;
 
 final class EloquentCategoryRepository implements CategoryRepositoryInterface
 {
@@ -15,7 +15,7 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
     {
         $model = $category->id()
             ? CategoryModel::findOrFail($category->id()->value())
-            : new CategoryModel();
+            : new CategoryModel;
 
         $model->name = $category->name()->value();
         $model->slug = $category->slug()->value();

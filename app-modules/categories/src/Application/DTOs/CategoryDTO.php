@@ -17,15 +17,14 @@ class CategoryDTO
         public readonly bool $is_active,
     ) {}
 
-
     public static function fromEntity(Category $category): self
     {
         return new self(
             id: $category->id()?->value(),
             name: $category->name()->value(),
-            slug: $category->slug()->value() ?? "",
+            slug: $category->slug()->value() ?? '',
             parent_id: $category->parentId()?->value(),
-            description: $category->description()->value() ?? "",
+            description: $category->description()->value() ?? '',
             is_active: $category->status()->value(),
         );
     }
