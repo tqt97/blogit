@@ -1,12 +1,13 @@
 <?php
 
-namespace Modules\Categories\Models;
+namespace Modules\Categories\Infrastructure\Persistence\Eloquents\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Category\Domain\Enums\CategoryStatus;
 
-class Category extends Model
+class CategoryModel extends Model
 {
     use HasFactory, Sluggable;
 
@@ -25,6 +26,10 @@ class Category extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'is_active' => CategoryStatus::class,
+    ];
+
     /**
      * Auto generate slug
      */
@@ -40,12 +45,12 @@ class Category extends Model
 
     public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(CategoryModel::class, 'parent_id');
     }
 
     public function parent()
     {
-        return $this->belongsTo(Category::class, 'parent_id');
+        return $this->belongsTo(CategoryModel::class, 'parent_id');
     }
 
     public function childrenRecursive()
