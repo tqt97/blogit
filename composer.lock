@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b53c796c85cf6d72742f5bb23c4a38c8",
+    "content-hash": "08998bfa5b84fe4a2aa96408fa23e2e3",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3264,6 +3264,38 @@
                     "Modules\\Roles\\Tests\\": "tests/",
                     "Modules\\Roles\\Database\\Factories\\": "database/factories/",
                     "Modules\\Roles\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "modules/tag",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/tag",
+                "reference": "05c90efe6de0cf513a1bd59ed231866d209a3d49"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Tag\\Infrastructure\\Providers\\TagServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Tag\\": "src/",
+                    "Modules\\Tag\\Tests\\": "tests/",
+                    "Modules\\Tag\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Tag\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
