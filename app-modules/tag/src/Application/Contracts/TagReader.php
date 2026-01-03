@@ -7,5 +7,6 @@ namespace Modules\Tag\Application\Contracts;
 interface TagReader
 {
     public function filterExistingIds(array $ids): array;
+
     public function listForSelect(): array;
 }

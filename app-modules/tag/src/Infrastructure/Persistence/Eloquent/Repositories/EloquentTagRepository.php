@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Repositories;
 
-use LogicException;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\ValueObjects\TagId;

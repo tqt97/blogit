@@ -62,7 +62,7 @@ class TagController
     public function edit(int $tag, ShowTagHandler $handler): Response
     {
         $tagData = $handler->handle(new ShowTagQuery($tag));
-        abort_if(!$tagData, 404);
+        abort_if(! $tagData, 404);
 
         return Inertia::render('admin/tags/edit', [
             'tag' => $tagData,
