@@ -9,7 +9,6 @@ use Modules\Categories\Application\Queries\ListCategoriesQuery;
 use Modules\Categories\Infrastructure\Persistence\Eloquents\Models\CategoryModel;
 use Modules\Category\Application\DTOs\CategoryDTO;
 use Modules\Tag\Application\DTOs\TagDTO;
-use Modules\Tag\Infrastructure\Persistence\Eloquent\Models\TagModel;
 
 final class ListTagsHandler
 {
@@ -32,9 +31,9 @@ final class ListTagsHandler
         $p = $builder->orderBy($sort, $dir)->paginate($q->perPage);
 
         // map items -> DTO
-        $p->setCollection(
-            $p->getCollection()->map(fn($m) => new CategoryDTO((int) $m->id, (string) $m->name, (string) $m->slug))
-        );
+        // $p->setCollection(
+        //     $p->getCollection()->map(fn ($m) => new CategoryDTO((int) $m->id, (string) $m->name, (string) $m->slug))
+        // );
 
         return $p;
     }
