@@ -17,20 +17,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class UpdateTagHandler
 {
     public function __construct(
-        private readonly TagRepository $repo,
+        private readonly TagRepository $repository,
         private readonly UniqueTagSlugRule $uniqueSlugRule,
     ) {}
 
-    public function handle(UpdateTagCommand $cmd): Tag
+    public function handle(UpdateTagCommand $command): Tag
     {
-        $id = new TagId($cmd->id);
-        $tag = $this->repo->getById(new TagId($id->value()));
+        $id = new TagId($command->id);
+        $tag = $this->repository->getById(new TagId($id->value()));
         if (! $tag) {
             throw new NotFoundHttpException('Tag not found.');
         }
 
-        $name = new TagName($cmd->name);
-        $slug = new TagSlug($cmd->slug);
+        $name = new TagName($command->name);
+        $slug = new TagSlug($command->slug);
         if (! $this->uniqueSlugRule->isUnique($slug, $id)) {
             throw new DomainException('Slug already exists.');
         }
@@ -38,6 +38,6 @@ final class UpdateTagHandler
         $tag->rename($name);
         $tag->changeSlug($slug);
 
-        return $this->repo->save($tag);
+        return $this->repository->save($tag);
     }
 }

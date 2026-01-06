@@ -14,6 +14,8 @@ export function tagColumns(onDelete: (id: number) => void): ColumnDef<Tag>[] {
     return [
         {
             id: 'select',
+            minSize: 8,
+            maxSize: 8,
             header: ({ table }) => (
                 <Checkbox
                     className="mx-3 hover:cursor-pointer"
@@ -40,6 +42,8 @@ export function tagColumns(onDelete: (id: number) => void): ColumnDef<Tag>[] {
         },
         {
             accessorKey: 'id',
+            minSize: 12,
+            maxSize: 12,
             header: ({ column }) => (
                 <SortableColumnHeader column={column} title="ID" />
             ),

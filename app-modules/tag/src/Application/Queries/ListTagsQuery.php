@@ -7,7 +7,7 @@ namespace Modules\Tag\Application\Queries;
 final class ListTagsQuery
 {
     public function __construct(
-        public readonly ?string $search = null,
+        public readonly ?string $search,
         public readonly int $page = 1,
         public readonly int $perPage = 15,
         public readonly string $sort = 'id',

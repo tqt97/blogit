@@ -12,14 +12,14 @@ final class ListTagsHandler
 {
     public function __construct(private TagReader $reader) {}
 
-    public function handle(ListTagsQuery $q): LengthAwarePaginator
+    public function handle(ListTagsQuery $query): LengthAwarePaginator
     {
         return $this->reader->paginate(
-            search: $q->search,
-            page: $q->page,
-            perPage: $q->perPage,
-            sort: $q->sort,
-            direction: $q->direction
+            search: $query->search,
+            page: $query->page,
+            perPage: $query->perPage,
+            sort: $query->sort,
+            direction: $query->direction
         );
     }
 }

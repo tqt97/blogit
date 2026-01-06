@@ -10,16 +10,16 @@ use Modules\Tag\Domain\ValueObjects\TagId;
 
 final class DeleteTagHandler
 {
-    public function __construct(private readonly TagRepository $repo) {}
+    public function __construct(private readonly TagRepository $repository) {}
 
-    public function handle(DeleteTagCommand $cmd): void
+    public function handle(DeleteTagCommand $command): void
     {
-        $id = new TagId($cmd->id);
-        $tag = $this->repo->getById($id);
+        $id = new TagId($command->id);
+        $tag = $this->repository->getById($id);
         if (! $tag) {
             return;
         }
 
-        $this->repo->delete($id);
+        $this->repository->delete($id);
     }
 }

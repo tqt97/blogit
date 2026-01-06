@@ -12,8 +12,8 @@ final class ShowTagHandler
 {
     public function __construct(private readonly TagReader $reader) {}
 
-    public function handle(ShowTagQuery $q): ?TagDTO
+    public function handle(ShowTagQuery $query): ?TagDTO
     {
-        return $this->reader->find($q->id);
+        return $this->reader->find($query->id);
     }
 }

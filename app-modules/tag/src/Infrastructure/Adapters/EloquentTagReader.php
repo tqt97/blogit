@@ -13,47 +13,47 @@ final class EloquentTagReader implements TagReader
 {
     public function paginate(?string $search, int $page, int $perPage, string $sort, string $direction): LengthAwarePaginator
     {
-        $q = TagModel::query()->select(['id', 'name', 'slug', 'created_at', 'updated_at']);
+        $query = TagModel::query()->select(['id', 'name', 'slug', 'created_at', 'updated_at']);
 
         if ($search !== null && trim($search) !== '') {
             $s = trim($search);
-            $q->where('name', 'like', "%{$s}%");
+            $query->where('name', 'like', "%{$s}%");
         }
 
-        $p = $q->orderBy($sort, $direction)
+        $tags = $query->orderBy($sort, $direction)
             ->paginate(perPage: $perPage, page: $page)
             ->withQueryString();
 
         // Map paginator items to TagDTO
-        $p->setCollection(
-            $p->getCollection()->map(fn ($m) => new TagDTO(
-                id: (int) $m->id,
-                name: (string) $m->name,
-                slug: (string) $m->slug,
-                created_at: $m->created_at?->toISOString() ?? '',
-                updated_at: $m->updated_at?->toISOString() ?? '',
+        $tags->setCollection(
+            $tags->getCollection()->map(fn ($model) => new TagDTO(
+                id: (int) $model->id,
+                name: (string) $model->name,
+                slug: (string) $model->slug,
+                created_at: $model->created_at?->toISOString() ?? '',
+                updated_at: $model->updated_at?->toISOString() ?? '',
             ))
         );
 
-        return $p;
+        return $tags;
     }
 
     public function find(int $id): ?TagDTO
     {
-        $m = TagModel::query()
+        $model = TagModel::query()
             ->select(['id', 'name', 'slug', 'created_at', 'updated_at'])
             ->find($id);
 
-        if (! $m) {
+        if (! $model) {
             return null;
         }
 
         return new TagDTO(
-            id: (int) $m->id,
-            name: (string) $m->name,
-            slug: (string) $m->slug,
-            created_at: $m->created_at?->toISOString() ?? '',
-            updated_at: $m->updated_at?->toISOString() ?? '',
+            id: (int) $model->id,
+            name: (string) $model->name,
+            slug: (string) $model->slug,
+            created_at: $model->created_at?->toISOString() ?? '',
+            updated_at: $model->updated_at?->toISOString() ?? '',
         );
     }
 }

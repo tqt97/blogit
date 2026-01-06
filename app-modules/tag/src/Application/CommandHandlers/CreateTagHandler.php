@@ -15,7 +15,7 @@ use Modules\Tag\Domain\ValueObjects\TagSlug;
 class CreateTagHandler
 {
     public function __construct(
-        private readonly TagRepository $repo,
+        private readonly TagRepository $repository,
         private readonly UniqueTagSlugRule $uniqueSlugRule,
     ) {}
 
@@ -30,6 +30,6 @@ class CreateTagHandler
 
         $tag = Tag::create($name, $slug);
 
-        return $this->repo->save($tag);
+        return $this->repository->save($tag);
     }
 }

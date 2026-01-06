@@ -55,6 +55,7 @@ export function DataTable<TData>({
                             {hg.headers.map((header) => (
                                 <th
                                     key={header.id}
+                                    style={{ width: header.getSize() }}
                                     className="py-2 text-left text-gray-950"
                                 >
                                     {header.isPlaceholder
@@ -79,6 +80,7 @@ export function DataTable<TData>({
                                 {row.getVisibleCells().map((cell) => (
                                     <td
                                         key={cell.id}
+                                        style={{ width: cell.column.getSize() }}
                                         className="px-3 py-3 text-sm"
                                     >
                                         {flexRender(
