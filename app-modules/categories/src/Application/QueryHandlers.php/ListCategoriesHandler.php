@@ -7,12 +7,10 @@ namespace Modules\Tag\Application\QueryHandlers;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Categories\Application\Queries\ListCategoriesQuery;
 use Modules\Categories\Infrastructure\Persistence\Eloquents\Models\CategoryModel;
-use Modules\Category\Application\DTOs\CategoryDTO;
-use Modules\Tag\Application\DTOs\TagDTO;
+// use Modules\Category\Application\DTOs\CategoryDTO;
 
 final class ListTagsHandler
 {
-    /** @return LengthAwarePaginator<TagDTO> */
     public function handle(ListCategoriesQuery $q): LengthAwarePaginator
     {
         $builder = CategoryModel::query()->select(['id', 'name', 'slug', 'created_at']);
