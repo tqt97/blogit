@@ -7,6 +7,7 @@ namespace Modules\Categories\Infrastructure\Repositories;
 use Modules\Categories\Domain\Entities\Category;
 use Modules\Categories\Domain\Interfaces\CategoryRepositoryInterface;
 use Modules\Categories\Domain\ValueObjects\CategoryId;
+use Modules\Categories\Domain\ValueObjects\CategorySlug;
 use Modules\Categories\Infrastructure\Persistence\Eloquents\Models\CategoryModel;
 
 final class EloquentCategoryRepository implements CategoryRepositoryInterface
@@ -30,5 +31,16 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
                 new CategoryId($model->id)
             );
         }
+    }
+
+    public function existsBySlug(CategorySlug $slug, ?CategoryId $ignoreId = null): bool
+    {
+        $q = CategoryModel::query()->where('slug', $slug->value());
+
+        if ($ignoreId !== null) {
+            $q->where('id', '!=', $ignoreId->value());
+        }
+
+        return $q->exists();
     }
 }
