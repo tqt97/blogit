@@ -38,6 +38,11 @@ class BulkDestroyTagRequest extends FormRequest
         ];
     }
 
+    public function ids(): array
+    {
+        return array_map('intval', $this->validated('ids'));
+    }
+
     protected function prepareForValidation(): void
     {
         $raw = $this->input('ids');
@@ -54,10 +59,5 @@ class BulkDestroyTagRequest extends FormRequest
         ))));
 
         $this->merge(['ids' => $ids]);
-    }
-
-    public function ids(): array
-    {
-        return array_map('intval', $this->validated('ids'));
     }
 }

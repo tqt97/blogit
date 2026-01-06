@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Application\CommandHandlers;
 
+use DomainException;
 use Modules\Tag\Application\Commands\UpdateTagCommand;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\Repositories\TagRepository;
@@ -31,7 +32,7 @@ final class UpdateTagHandler
         $name = new TagName($cmd->name);
         $slug = new TagSlug($cmd->slug);
         if (! $this->uniqueSlugRule->isUnique($slug, $id)) {
-            throw new \DomainException('Slug already exists.');
+            throw new DomainException('Slug already exists.');
         }
 
         $tag->rename($name);

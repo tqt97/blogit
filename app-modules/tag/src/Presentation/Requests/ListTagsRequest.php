@@ -30,6 +30,19 @@ class ListTagsRequest extends FormRequest
         ];
     }
 
+    public function filters(): array
+    {
+        $data = $this->validated();
+
+        return [
+            'search' => $data['search'] ?? null,
+            'page' => (int) ($data['page'] ?? 1),
+            'per_page' => (int) ($data['per_page'] ?? 15),
+            'sort' => (string) ($data['sort'] ?? 'id'),
+            'direction' => (string) ($data['direction'] ?? 'desc'),
+        ];
+    }
+
     protected function prepareForValidation(): void
     {
         $allowedSorts = ['id', 'name', 'slug', 'created_at', 'updated_at'];
@@ -54,18 +67,5 @@ class ListTagsRequest extends FormRequest
             'page' => max(1, $page),
             'per_page' => min(100, max(1, $perPage)),
         ]);
-    }
-
-    public function filters(): array
-    {
-        $data = $this->validated();
-
-        return [
-            'search' => $data['search'] ?? null,
-            'page' => (int) ($data['page'] ?? 1),
-            'per_page' => (int) ($data['per_page'] ?? 15),
-            'sort' => (string) ($data['sort'] ?? 'id'),
-            'direction' => (string) ($data['direction'] ?? 'desc'),
-        ];
     }
 }

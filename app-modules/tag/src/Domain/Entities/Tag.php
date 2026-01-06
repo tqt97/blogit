@@ -20,6 +20,11 @@ final class Tag
         private readonly ?TagUpdatedAt $updatedAt = null,
     ) {}
 
+    public static function create(TagName $name, TagSlug $slug): self
+    {
+        return new self(null, $name, $slug);
+    }
+
     public function id(): ?TagId
     {
         return $this->id;
@@ -48,11 +53,6 @@ final class Tag
     public function setId(TagId $id): void
     {
         $this->id = $id;
-    }
-
-    public static function create(TagName $name, TagSlug $slug): self
-    {
-        return new self(null, $name, $slug);
     }
 
     public function rename(TagName $name): void
