@@ -35,3 +35,9 @@ import { Toaster } from '@/components/ui/sonner';
 ```npx
 npx shadcn@latest add pagination
 ```
+
+### Install react-table
+
+```npx
+npm install @tanstack/react-table
+```

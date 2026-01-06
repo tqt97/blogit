@@ -1,13 +1,13 @@
 import AppLayout from '@/layouts/app-layout';
-import TagForm from '@/pages/admin/tags/form';
+import TagForm from '@/pages/admin/tags/partials/form';
 import { index, store } from '@/routes/tags';
 import type { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 export default function Create() {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Tags', href: 'tags' },
-        { title: 'Create', href: 'tags/create' },
+        { title: 'Tags', href: '/tags' },
+        { title: 'Create', href: '/tags/create' },
     ];
 
     return (
