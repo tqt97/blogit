@@ -19,6 +19,11 @@ class TagModel extends Model
         'slug',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     // public function posts(): BelongsToMany
     // {
     //     return $this->belongsToMany(Post::class, 'post_tag')->withTimestamps();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Repositories;
 
+use Illuminate\Support\Facades\DB;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\ValueObjects\TagId;
@@ -15,43 +16,48 @@ final class EloquentTagRepository implements TagRepository
 {
     public function __construct(private readonly TagMapper $mapper) {}
 
-    public function save(Tag $tag): void
+    public function save(Tag $tag): Tag
     {
-        $model = null;
+        return DB::transaction(function () use ($tag): Tag {
+            $model = $tag->id()
+                ? TagModel::query()->findOrFail($tag->id()->value())
+                : new TagModel;
 
-        if ($tag->id() !== null) {
-            $model = TagModel::query()->find($tag->id()->value());
-        }
+            $this->mapper->toPersistence($tag, $model)->save();
 
-        $model = $this->mapper->toPersistence($tag, $model);
-        $model->save();
-
-        // set id back to entity if new
-        if ($tag->id() === null) {
-            $tag->setId(new TagId((int) $model->id));
-        }
+            return $this->mapper->toEntity($model->fresh());
+        });
     }
 
     public function getById(TagId $id): ?Tag
     {
         $model = TagModel::query()->find($id->value());
 
-        return $model ? $this->mapper->toDomain($model) : null;
+        return $model ? $this->mapper->toEntity($model) : null;
     }
 
     public function existsBySlug(TagSlug $slug, ?TagId $ignoreId = null): bool
     {
-        $q = TagModel::query()->where('slug', $slug->value());
+        $query = TagModel::query()->where('slug', $slug->value());
 
         if ($ignoreId !== null) {
-            $q->where('id', '!=', $ignoreId->value());
+            $query->where('id', '!=', $ignoreId->value());
         }
 
-        return $q->exists();
+        return $query->exists();
     }
 
     public function delete(TagId $id): void
     {
-        TagModel::query()->find($id->value())->delete();
+        TagModel::query()->whereKey($id->value())->delete();
+    }
+
+    public function deleteMany(array $ids): void
+    {
+        $idValues = array_map(fn ($id) => $id->value(), $ids);
+
+        TagModel::query()
+            ->whereIn('id', $idValues)
+            ->delete();
     }
 }

@@ -4,20 +4,25 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Mappers;
 
+use DateTimeImmutable;
 use Modules\Tag\Domain\Entities\Tag;
+use Modules\Tag\Domain\ValueObjects\TagCreatedAt;
 use Modules\Tag\Domain\ValueObjects\TagId;
 use Modules\Tag\Domain\ValueObjects\TagName;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
+use Modules\Tag\Domain\ValueObjects\TagUpdatedAt;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Models\TagModel;
 
 final class TagMapper
 {
-    public function toDomain(TagModel $model): Tag
+    public function toEntity(TagModel $model): Tag
     {
         return new Tag(
             id: new TagId((int) $model->id),
             name: new TagName((string) $model->name),
             slug: new TagSlug((string) $model->slug),
+            createdAt: new TagCreatedAt(DateTimeImmutable::createFromMutable($model->created_at)),
+            updatedAt: new TagUpdatedAt(DateTimeImmutable::createFromMutable($model->updated_at)),
         );
     }
 

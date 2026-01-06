@@ -23,7 +23,8 @@ class StoreTagRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'slug' => ['required', 'string', 'unique:tags,slug'],
+            'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'unique:tags,slug'],
+            'intent' => ['nullable', 'in:default,create_and_continue'],
         ];
     }
 }

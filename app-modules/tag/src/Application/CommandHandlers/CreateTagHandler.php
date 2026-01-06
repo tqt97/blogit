@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Application\CommandHandlers;
 
+use DomainException;
 use Modules\Tag\Application\Commands\CreateTagCommand;
-use Modules\Tag\Application\DTOs\TagDTO;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\Rules\UniqueTagSlugRule;
@@ -19,20 +19,17 @@ class CreateTagHandler
         private readonly UniqueTagSlugRule $uniqueSlugRule,
     ) {}
 
-    public function handle(CreateTagCommand $command): TagDTO
+    public function handle(CreateTagCommand $command): Tag
     {
         $name = new TagName($command->name);
         $slug = new TagSlug($command->slug);
 
-        $this->uniqueSlugRule->ensureUnique($slug);
+        if (! $this->uniqueSlugRule->isUnique($slug)) {
+            throw new DomainException('Slug already exists.');
+        }
 
-        $tag = Tag::create(
-            name: $name,
-            slug: $slug,
-        );
+        $tag = Tag::create($name, $slug);
 
-        $this->repo->save($tag);
-
-        return TagDTO::fromEntity($tag);
+        return $this->repo->save($tag);
     }
 }

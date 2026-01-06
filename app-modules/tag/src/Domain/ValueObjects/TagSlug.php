@@ -14,6 +14,13 @@ final class TagSlug
         if ($value === '') {
             throw new InvalidArgumentException('Tag slug cannot be empty.');
         }
+        if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $value)) {
+            throw new InvalidArgumentException('Tag slug format is invalid.');
+        }
+
+        if (strlen($value) > 255) {
+            throw new InvalidArgumentException('Tag slug is too long.');
+        }
         $this->value = $value;
     }
 

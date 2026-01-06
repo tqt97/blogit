@@ -14,6 +14,12 @@ final class DeleteTagHandler
 
     public function handle(DeleteTagCommand $cmd): void
     {
-        $this->repo->delete(new TagId($cmd->id));
+        $id = new TagId($cmd->id);
+        $tag = $this->repo->getById($id);
+        if (! $tag) {
+            return;
+        }
+
+        $this->repo->delete($id);
     }
 }

@@ -8,6 +8,7 @@ final class ListTagsQuery
 {
     public function __construct(
         public readonly ?string $search = null,
+        public readonly int $page = 1,
         public readonly int $perPage = 15,
         public readonly string $sort = 'id',
         public readonly string $direction = 'desc',

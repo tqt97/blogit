@@ -9,6 +9,6 @@ final class UpdateTagCommand
     public function __construct(
         public readonly int $id,
         public readonly string $name,
-        public readonly ?string $slug = null,
+        public readonly string $slug,
     ) {}
 }

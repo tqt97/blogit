@@ -17,4 +17,5 @@ Route::middleware(['web', 'auth'])
     ->group(function () {
         Route::resource('tags', TagController::class)
             ->parameters(['tags' => 'tag']);
+        Route::delete('tags', [TagController::class, 'bulkDestroy'])->name('tags.bulk-destroy');
     });

@@ -8,11 +8,13 @@ use Modules\Tag\Domain\ValueObjects\TagSlug;
 
 interface TagRepository
 {
-    public function save(Tag $tag): void;
-
     public function getById(TagId $id): ?Tag;
 
     public function existsBySlug(TagSlug $slug, ?TagId $ignoreId = null): bool;
 
+    public function save(Tag $tag): Tag;
+
     public function delete(TagId $id): void;
+
+    public function deleteMany(array $ids): void;
 }

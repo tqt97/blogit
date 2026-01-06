@@ -11,9 +11,13 @@ final class TagName
     public function __construct(private string $value)
     {
         $value = trim($value);
-        if ($value === '') {
+        if ($value == '') {
             throw new InvalidArgumentException('Tag name cannot be empty.');
         }
+        if (mb_strlen($value) > 255) {
+            throw new InvalidArgumentException('TagName too long.');
+        }
+
         $this->value = $value;
     }
 

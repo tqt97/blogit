@@ -2,7 +2,8 @@
 
 class TagSelectOption
 {
-    public int $id;
-
-    public string $name;
+    public function __construct(
+        public int $value,
+        public string $label,
+    ) {}
 }

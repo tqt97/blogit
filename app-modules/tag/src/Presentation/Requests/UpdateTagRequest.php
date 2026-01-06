@@ -3,7 +3,6 @@
 namespace Modules\Tag\Presentation\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateTagRequest extends FormRequest
 {
@@ -26,11 +25,8 @@ class UpdateTagRequest extends FormRequest
 
         return [
             'name' => ['required', 'string'],
-            'slug' => [
-                'required',
-                'string',
-                Rule::unique('tags', 'slug')->ignore($tagId),
-            ],
+            'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', "unique:tags,slug,{$tagId}"],
+
         ];
     }
 }

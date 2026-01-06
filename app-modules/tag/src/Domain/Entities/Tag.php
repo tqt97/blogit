@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Domain\Entities;
 
+use Modules\Tag\Domain\ValueObjects\TagCreatedAt;
 use Modules\Tag\Domain\ValueObjects\TagId;
 use Modules\Tag\Domain\ValueObjects\TagName;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
+use Modules\Tag\Domain\ValueObjects\TagUpdatedAt;
 
 final class Tag
 {
     public function __construct(
-        private ?TagId $id,
+        private readonly ?TagId $id,
         private TagName $name,
         private TagSlug $slug,
+        private readonly ?TagCreatedAt $createdAt = null,
+        private readonly ?TagUpdatedAt $updatedAt = null,
     ) {}
-
-    public static function create(TagName $name, TagSlug $slug): self
-    {
-        return new self(null, $name, $slug);
-    }
 
     public function id(): ?TagId
     {
@@ -36,17 +35,33 @@ final class Tag
         return $this->slug;
     }
 
-    public function rename(TagName $name, TagSlug $slug): void
+    public function createdAt(): ?TagCreatedAt
     {
-        $this->name = $name;
-        $this->slug = $slug;
+        return $this->createdAt;
     }
 
-    /**
-     * Infrastructure (mapper) có thể set id sau khi persist
-     */
+    public function updatedAt(): ?TagUpdatedAt
+    {
+        return $this->updatedAt;
+    }
+
     public function setId(TagId $id): void
     {
         $this->id = $id;
+    }
+
+    public static function create(TagName $name, TagSlug $slug): self
+    {
+        return new self(null, $name, $slug);
+    }
+
+    public function rename(TagName $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function changeSlug(TagSlug $slug): void
+    {
+        $this->slug = $slug;
     }
 }
