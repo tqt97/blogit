@@ -56,7 +56,7 @@ export function DataTable<TData>({
                                 <th
                                     key={header.id}
                                     style={{ width: header.getSize() }}
-                                    className="py-2 text-left text-gray-950"
+                                    className="py-2 text-left text-gray-950 dark:text-gray-50"
                                 >
                                     {header.isPlaceholder
                                         ? null

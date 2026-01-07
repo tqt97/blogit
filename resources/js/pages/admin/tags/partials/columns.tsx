@@ -85,7 +85,7 @@ export function tagColumns(onDelete: (id: number) => void): ColumnDef<Tag>[] {
                             asChild
                             variant="ghost"
                             size="icon"
-                            className="text-blue-500 hover:cursor-pointer hover:bg-blue-500 hover:text-white"
+                            className="text-blue-500 hover:cursor-pointer hover:bg-blue-500 hover:text-white dark:text-blue-400 dark:hover:bg-blue-500 dark:hover:text-white"
                         >
                             <Link href={edit.url(tag.id)}>
                                 <PencilIcon className="size-4" />
@@ -95,7 +95,7 @@ export function tagColumns(onDelete: (id: number) => void): ColumnDef<Tag>[] {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-destructive hover:cursor-pointer hover:bg-destructive hover:text-white"
+                            className="text-destructive hover:cursor-pointer hover:bg-destructive  hover:text-white dark:text-destructive dark:hover:bg-destructive dark:hover:text-white"
                             onClick={() => onDelete(tag.id)}
                         >
                             <TrashIcon className="size-4" />

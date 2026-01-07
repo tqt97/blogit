@@ -11,7 +11,7 @@ export function SortableColumnHeader<TData, TValue>({
             type="button"
             variant="ghost"
             size="sm"
-            className="flex items-center gap-1 px-0 hover:cursor-pointer hover:bg-gray-100 hover:text-gray-950"
+            className="flex items-center gap-1 px-0 hover:cursor-pointer hover:bg-gray-100 hover:text-gray-950 dark:hover:bg-gray-900 dark:hover:text-gray-50"
             onClick={() => {
                 const current = column.getIsSorted();
                 column.toggleSorting(current === 'asc');

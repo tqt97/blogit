@@ -59,7 +59,7 @@ export function ListToolbar({
 
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                            className="text-destructive hover:cursor-pointer focus:text-destructive"
+                            className="text-destructive hover:cursor-pointer focus:text-destructive dark:text-red-50 dark:bg-destructive/50 dark:hover:bg-destructive dark:hover:text-white"
                             onClick={onBulkDeleteClick}
                         >
                             Delete selected ({selectedCount})
@@ -70,7 +70,7 @@ export function ListToolbar({
                 {hasSelection ? (
                     <Button
                         variant="secondary"
-                        className="text-destructive hover:cursor-pointer hover:bg-destructive hover:text-white"
+                        className="text-destructive hover:cursor-pointer hover:bg-destructive hover:text-white dark:bg-destructive/60 dark:hover:bg-destructive dark:text-gray-300 dark:hover:text-white"
                         onClick={onClearSelection}
                     >
                         Clear ({selectedCount})
