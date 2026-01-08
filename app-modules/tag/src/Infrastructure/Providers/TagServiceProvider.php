@@ -22,5 +22,8 @@ class TagServiceProvider extends ServiceProvider
         $this->app->bind(UniqueTagSlugRule::class, EloquentUniqueTagSlugRule::class);
     }
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        $this->loadRoutesFrom(__DIR__.'/../../Presentation/Routes/web.php');
+    }
 }
