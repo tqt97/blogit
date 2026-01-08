@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Domain\ValueObjects;
 
+use InvalidArgumentException;
+
 final readonly class Pagination
 {
     public const DEFAULT_PAGE = 1;
@@ -17,11 +19,11 @@ final readonly class Pagination
         public int $perPage = self::DEFAULT_PER_PAGE,
     ) {
         if ($this->page < 1) {
-            throw new \InvalidArgumentException('Page must be >= 1.');
+            throw new InvalidArgumentException('Page must be >= 1.');
         }
 
         if ($this->perPage < 1 || $this->perPage > self::MAX_PER_PAGE) {
-            throw new \InvalidArgumentException('PerPage out of range.');
+            throw new InvalidArgumentException('PerPage out of range.');
         }
     }
 

@@ -6,6 +6,7 @@ namespace Modules\Tag\Presentation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use InvalidArgumentException;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
 
 final class TagSlugRule implements ValidationRule
@@ -20,7 +21,7 @@ final class TagSlugRule implements ValidationRule
 
         try {
             new TagSlug($value);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $fail($e->getMessage());
         }
     }
