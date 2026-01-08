@@ -22,8 +22,8 @@ class BulkDestroyTagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'min:1'],
+            'ids' => ['required', 'array', 'min:1', 'integer'],
+            'ids.*' => ['bail', 'required', 'integer', 'min:1', 'distinct'],
         ];
     }
 
@@ -35,29 +35,7 @@ class BulkDestroyTagRequest extends FormRequest
             'ids.min' => 'Please select at least one tag.',
             'ids.*.integer' => 'Invalid tag id.',
             'ids.*.min' => 'Invalid tag id.',
+            'ids.*.distinct' => 'Duplicate tag id.',
         ];
-    }
-
-    public function ids(): array
-    {
-        return array_map('intval', $this->validated('ids'));
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $raw = $this->input('ids');
-
-        if (! is_array($raw)) {
-            $raw = [];
-        }
-
-        $ids = array_values(array_unique(array_filter(array_map(
-            static fn ($v) => filter_var($v, FILTER_VALIDATE_INT, [
-                'options' => ['min_range' => 1],
-            ]) ?: null,
-            $raw
-        ))));
-
-        $this->merge(['ids' => $ids]);
     }
 }

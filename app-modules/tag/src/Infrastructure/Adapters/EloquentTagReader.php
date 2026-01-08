@@ -7,35 +7,37 @@ namespace Modules\Tag\Infrastructure\Adapters;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Modules\Tag\Application\Contracts\TagReader;
 use Modules\Tag\Application\DTOs\TagDTO;
+use Modules\Tag\Domain\ValueObjects\Pagination;
+use Modules\Tag\Domain\ValueObjects\SearchTerm;
+use Modules\Tag\Domain\ValueObjects\Sorting;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Models\TagModel;
 
 final class EloquentTagReader implements TagReader
 {
-    public function paginate(?string $search, int $page, int $perPage, string $sort, string $direction): LengthAwarePaginator
+    public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator
     {
-        $query = TagModel::query()->select(['id', 'name', 'slug', 'created_at', 'updated_at']);
+        $query = TagModel::query()
+            ->select(['id', 'name', 'slug', 'created_at', 'updated_at']);
 
-        if ($search !== null && trim($search) !== '') {
-            $s = trim($search);
-            $query->where('name', 'like', "%{$s}%");
+        if ($search !== null) {
+            $s = $search->value;
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', "%{$s}%")
+                    ->orWhere('slug', 'like', "%{$s}%");
+            });
         }
 
-        $tags = $query->orderBy($sort, $direction)
-            ->paginate(perPage: $perPage, page: $page)
-            ->withQueryString();
-
-        // Map paginator items to TagDTO
-        $tags->setCollection(
-            $tags->getCollection()->map(fn ($model) => new TagDTO(
+        return $query
+            ->orderBy($sorting->field->value, $sorting->direction->value)
+            ->paginate(perPage: $pagination->perPage, page: $pagination->page)
+            ->withQueryString()
+            ->through(fn (TagModel $model) => new TagDTO(
                 id: (int) $model->id,
                 name: (string) $model->name,
                 slug: (string) $model->slug,
                 created_at: $model->created_at?->toISOString() ?? '',
                 updated_at: $model->updated_at?->toISOString() ?? '',
-            ))
-        );
-
-        return $tags;
+            ));
     }
 
     public function find(int $id): ?TagDTO

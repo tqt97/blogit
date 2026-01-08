@@ -16,10 +16,8 @@ final class ListTagsHandler
     {
         return $this->reader->paginate(
             search: $query->search,
-            page: $query->page,
-            perPage: $query->perPage,
-            sort: $query->sort,
-            direction: $query->direction
+            pagination: $query->pagination,
+            sorting: $query->sorting,
         );
     }
 }

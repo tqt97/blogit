@@ -3,6 +3,10 @@
 namespace Modules\Tag\Presentation\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Modules\Tag\Domain\ValueObjects\Pagination;
+use Modules\Tag\Domain\ValueObjects\SortDirection;
+use Modules\Tag\Domain\ValueObjects\SortField;
 
 class ListTagsRequest extends FormRequest
 {
@@ -24,48 +28,26 @@ class ListTagsRequest extends FormRequest
         return [
             'search' => ['nullable', 'string', 'max:255'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sort' => ['nullable', 'string'],
-            'direction' => ['nullable', 'string'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:'.Pagination::MAX_PER_PAGE],
+            'sort' => ['nullable', Rule::in(array_map(fn ($c) => $c->value, SortField::cases()))],
+            'direction' => ['nullable', Rule::in(array_map(fn ($c) => $c->value, SortDirection::cases()))],
         ];
     }
 
     public function filters(): array
     {
-        $data = $this->validated();
-
-        return [
-            'search' => $data['search'] ?? null,
-            'page' => (int) ($data['page'] ?? 1),
-            'per_page' => (int) ($data['per_page'] ?? 15),
-            'sort' => (string) ($data['sort'] ?? 'id'),
-            'direction' => (string) ($data['direction'] ?? 'desc'),
-        ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $allowedSorts = ['id', 'name', 'slug', 'created_at', 'updated_at'];
+        $this->validated();
 
         $search = $this->input('search');
         $search = is_string($search) ? trim($search) : null;
-        $search = ($search !== '') ? $search : null;
+        $search = ($search === '') ? null : $search;
 
-        $sort = (string) ($this->input('sort') ?? 'id');
-        $sort = in_array($sort, $allowedSorts, true) ? $sort : 'id';
-
-        $direction = strtolower((string) ($this->input('direction') ?? 'desc'));
-        $direction = in_array($direction, ['asc', 'desc'], true) ? $direction : 'desc';
-
-        $page = (int) ($this->input('page') ?? 1);
-        $perPage = (int) ($this->input('per_page') ?? 15);
-
-        $this->merge([
+        return [
             'search' => $search,
-            'sort' => $sort,
-            'direction' => $direction,
-            'page' => max(1, $page),
-            'per_page' => min(100, max(1, $perPage)),
-        ]);
+            'page' => $this->integer('page', Pagination::DEFAULT_PAGE),
+            'per_page' => $this->integer('per_page', Pagination::DEFAULT_PER_PAGE),
+            'sort' => $this->input('sort', SortField::Id->value),
+            'direction' => $this->input('direction', SortDirection::Desc->value),
+        ];
     }
 }

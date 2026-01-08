@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Mappers;
 
-use DateTimeImmutable;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\ValueObjects\TagCreatedAt;
 use Modules\Tag\Domain\ValueObjects\TagId;
@@ -21,8 +20,8 @@ final class TagMapper
             id: new TagId((int) $model->id),
             name: new TagName((string) $model->name),
             slug: new TagSlug((string) $model->slug),
-            createdAt: new TagCreatedAt(DateTimeImmutable::createFromMutable($model->created_at)),
-            updatedAt: new TagUpdatedAt(DateTimeImmutable::createFromMutable($model->updated_at)),
+            createdAt: new TagCreatedAt($model->created_at),
+            updatedAt: new TagUpdatedAt($model->updated_at),
         );
     }
 

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Application\Queries;
 
+use Modules\Tag\Domain\ValueObjects\Pagination;
+use Modules\Tag\Domain\ValueObjects\SearchTerm;
+use Modules\Tag\Domain\ValueObjects\Sorting;
+
 final class ListTagsQuery
 {
     public function __construct(
-        public readonly ?string $search,
-        public readonly int $page = 1,
-        public readonly int $perPage = 15,
-        public readonly string $sort = 'id',
-        public readonly string $direction = 'desc',
+        public ?SearchTerm $search,
+        public Pagination $pagination,
+        public Sorting $sorting,
     ) {}
 }

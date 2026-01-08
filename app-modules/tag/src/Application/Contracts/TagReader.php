@@ -6,10 +6,13 @@ namespace Modules\Tag\Application\Contracts;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Modules\Tag\Application\DTOs\TagDTO;
+use Modules\Tag\Domain\ValueObjects\Pagination;
+use Modules\Tag\Domain\ValueObjects\SearchTerm;
+use Modules\Tag\Domain\ValueObjects\Sorting;
 
 interface TagReader
 {
-    public function paginate(?string $search, int $page, int $perPage, string $sort, string $direction): LengthAwarePaginator;
+    public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator;
 
     public function find(int $id): ?TagDTO;
 }

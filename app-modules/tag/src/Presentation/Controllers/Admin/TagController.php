@@ -3,6 +3,7 @@
 namespace Modules\Tag\Presentation\Controllers\Admin;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Modules\Tag\Application\CommandHandlers\BulkDeleteTagsHandler;
@@ -10,13 +11,14 @@ use Modules\Tag\Application\CommandHandlers\CreateTagHandler;
 use Modules\Tag\Application\CommandHandlers\DeleteTagHandler;
 use Modules\Tag\Application\CommandHandlers\UpdateTagHandler;
 use Modules\Tag\Application\Commands\BulkDeleteTagsCommand;
-use Modules\Tag\Application\Commands\CreateTagCommand;
 use Modules\Tag\Application\Commands\DeleteTagCommand;
-use Modules\Tag\Application\Commands\UpdateTagCommand;
-use Modules\Tag\Application\Queries\ListTagsQuery;
 use Modules\Tag\Application\Queries\ShowTagQuery;
 use Modules\Tag\Application\QueryHandlers\ListTagsHandler;
 use Modules\Tag\Application\QueryHandlers\ShowTagHandler;
+use Modules\Tag\Domain\ValueObjects\Intent;
+use Modules\Tag\Presentation\Mappers\CreateTagCommandMapper;
+use Modules\Tag\Presentation\Mappers\ListTagsQueryMapper;
+use Modules\Tag\Presentation\Mappers\UpdateTagCommandMapper;
 use Modules\Tag\Presentation\Requests\BulkDestroyTagRequest;
 use Modules\Tag\Presentation\Requests\ListTagsRequest;
 use Modules\Tag\Presentation\Requests\StoreTagRequest;
@@ -24,20 +26,12 @@ use Modules\Tag\Presentation\Requests\UpdateTagRequest;
 
 class TagController
 {
-    public function index(ListTagsRequest $request, ListTagsHandler $handler): Response
+    public function index(ListTagsRequest $request, ListTagsQueryMapper $mapper, ListTagsHandler $handler): Response
     {
         $filters = $request->filters();
 
-        $tags = $handler->handle(new ListTagsQuery(
-            search: $filters['search'],
-            page: $filters['page'],
-            perPage: $filters['per_page'],
-            sort: $filters['sort'],
-            direction: $filters['direction'],
-        ));
-
         return Inertia::render('admin/tags/index', [
-            'tags' => $tags,
+            'tags' => $handler->handle($mapper($filters)),
             'filters' => $filters,
         ]);
     }
@@ -47,28 +41,15 @@ class TagController
         return Inertia::render('admin/tags/create');
     }
 
-    public function store(StoreTagRequest $request, CreateTagHandler $handler): RedirectResponse
+    public function store(StoreTagRequest $request, CreateTagCommandMapper $mapper, CreateTagHandler $handler): RedirectResponse
     {
-        $data = $request->validated();
+        $handler->handle($mapper($request->validated()));
 
-        $handler->handle(new CreateTagCommand(
-            name: (string) $data['name'],
-            slug: (string) $data['slug'],
-        ));
-
-        $intent = $data['intent'] ?? 'default';
-
-        if ($intent === 'create_and_continue') {
-            return redirect()
-                ->route('tags.create')
-                ->with('success', 'Tag created. Add another.')
-                ->with('flash_id', (string) str()->uuid());
+        if ($request->validated('intent') == Intent::CreateAndContinue->value) {
+            return redirect()->route('tags.create')->with($this->flash('Tag created. Continue creating tags.'));
         }
 
-        return redirect()
-            ->route('tags.index')
-            ->with('success', 'Tag created.')
-            ->with('flash_id', (string) str()->uuid());
+        return redirect()->route('tags.index')->with($this->flash('Tag created.'));
     }
 
     public function edit(int $tag, ShowTagHandler $handler): Response
@@ -81,30 +62,29 @@ class TagController
         ]);
     }
 
-    public function update(int $id, UpdateTagRequest $request, UpdateTagHandler $handler): RedirectResponse
+    public function update(int $tag, UpdateTagRequest $request, UpdateTagCommandMapper $mapper, UpdateTagHandler $handler): RedirectResponse
     {
-        $data = $request->validated();
+        $handler->handle($mapper($tag, $request->validated()));
 
-        $handler->handle(new UpdateTagCommand(
-            id: $id,
-            name: (string) $data['name'],
-            slug: (string) $data['slug'],
-        ));
-
-        return back()->with('success', 'Tag updated.')->with('flash_id', (string) str()->uuid());
+        return back()->with($this->flash('Tag updated.'));
     }
 
     public function destroy(int $tag, DeleteTagHandler $handler): RedirectResponse
     {
         $handler->handle(new DeleteTagCommand($tag));
 
-        return back()->with('success', 'Tag deleted.')->with('flash_id', (string) str()->uuid());
+        return back()->with($this->flash('Tag deleted.'));
     }
 
     public function bulkDestroy(BulkDestroyTagRequest $request, BulkDeleteTagsHandler $handler): RedirectResponse
     {
-        $handler->handle(new BulkDeleteTagsCommand($request->ids()));
+        $handler->handle(new BulkDeleteTagsCommand($request->validated()));
 
-        return back()->with('success', 'Selected tags deleted.')->with('flash_id', (string) str()->uuid());
+        return back()->with($this->flash('Selected tags deleted.'));
+    }
+
+    private function flash(string $message, string $type = 'success'): array
+    {
+        return [$type => $message, 'flash_id' => (string) Str::uuid()];
     }
 }
