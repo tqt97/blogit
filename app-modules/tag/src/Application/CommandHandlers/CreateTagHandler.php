@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Application\CommandHandlers;
 
-use DomainException;
 use Modules\Tag\Application\Commands\CreateTagCommand;
 use Modules\Tag\Domain\Entities\Tag;
+use Modules\Tag\Domain\Exceptions\SlugAlreadyExistsException;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\Services\TagSlugUniquenessChecker;
 use Modules\Tag\Domain\ValueObjects\TagName;
@@ -25,7 +25,7 @@ class CreateTagHandler
         $slug = new TagSlug($command->slug);
 
         if (! $this->uniqueSlugRule->isUnique($slug)) {
-            throw new DomainException('Slug already exists.');
+            throw new SlugAlreadyExistsException;
         }
 
         $tag = Tag::create($name, $slug);

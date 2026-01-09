@@ -11,12 +11,9 @@ final class EloquentUniqueTagSlugRule implements TagSlugUniquenessChecker
 {
     public function isUnique(TagSlug $slug, ?TagId $ignoreId = null): bool
     {
-        $query = TagModel::query()->where('slug', $slug->value());
-
-        if ($ignoreId) {
-            $query->where('id', '!=', $ignoreId->value());
-        }
-
-        return ! $query->exists();
+        return ! TagModel::query()
+            ->where('slug', $slug->value())
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId->value()))
+            ->exists();
     }
 }

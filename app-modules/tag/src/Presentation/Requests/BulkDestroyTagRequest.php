@@ -22,7 +22,7 @@ class BulkDestroyTagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ids' => ['required', 'array', 'min:1', 'integer'],
+            'ids' => ['required', 'array', 'min:1'],
             'ids.*' => ['bail', 'required', 'integer', 'min:1', 'distinct'],
         ];
     }
