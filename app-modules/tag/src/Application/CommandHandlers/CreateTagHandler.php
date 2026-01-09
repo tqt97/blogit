@@ -8,7 +8,7 @@ use DomainException;
 use Modules\Tag\Application\Commands\CreateTagCommand;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\Repositories\TagRepository;
-use Modules\Tag\Domain\Rules\UniqueTagSlugRule;
+use Modules\Tag\Domain\Services\TagSlugUniquenessChecker;
 use Modules\Tag\Domain\ValueObjects\TagName;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
 
@@ -16,7 +16,7 @@ class CreateTagHandler
 {
     public function __construct(
         private readonly TagRepository $repository,
-        private readonly UniqueTagSlugRule $uniqueSlugRule,
+        private readonly TagSlugUniquenessChecker $uniqueSlugRule,
     ) {}
 
     public function handle(CreateTagCommand $command): Tag

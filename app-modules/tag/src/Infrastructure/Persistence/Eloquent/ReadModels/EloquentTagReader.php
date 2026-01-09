@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Modules\Tag\Infrastructure\Adapters;
+namespace Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Modules\Tag\Application\Contracts\TagReader;
 use Modules\Tag\Application\DTOs\TagDTO;
+use Modules\Tag\Application\QueryContracts\TagQueryRepository;
 use Modules\Tag\Domain\ValueObjects\Pagination;
 use Modules\Tag\Domain\ValueObjects\SearchTerm;
 use Modules\Tag\Domain\ValueObjects\Sorting;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Models\TagModel;
 
-final class EloquentTagReader implements TagReader
+final class EloquentTagReader implements TagQueryRepository
 {
     public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator
     {

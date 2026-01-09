@@ -95,7 +95,7 @@ export function tagColumns(onDelete: (id: number) => void): ColumnDef<Tag>[] {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-destructive hover:cursor-pointer hover:bg-destructive  hover:text-white dark:text-destructive dark:hover:bg-destructive dark:hover:text-white"
+                            className="text-destructive hover:cursor-pointer hover:bg-destructive hover:text-white dark:text-destructive dark:hover:bg-destructive dark:hover:text-white"
                             onClick={() => onDelete(tag.id)}
                         >
                             <TrashIcon className="size-4" />

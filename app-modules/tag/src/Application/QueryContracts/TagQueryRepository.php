@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Tag\Application\Contracts;
+namespace Modules\Tag\Application\QueryContracts;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Modules\Tag\Application\DTOs\TagDTO;
@@ -10,7 +10,7 @@ use Modules\Tag\Domain\ValueObjects\Pagination;
 use Modules\Tag\Domain\ValueObjects\SearchTerm;
 use Modules\Tag\Domain\ValueObjects\Sorting;
 
-interface TagReader
+interface TagQueryRepository
 {
     public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator;
 
