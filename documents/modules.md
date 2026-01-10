@@ -31,7 +31,7 @@ php artisan make:module my-module
 
 Modular will scaffold up a new module for you:
 
-```
+```md
 app-modules/
   my-module/
     composer.json
@@ -71,7 +71,7 @@ You may even want to add it to your `post-autoload-dump` scripts in your applica
 
 ## Usage
 
-All modules follow existing Laravel conventions, and auto-discovery 
+All modules follow existing Laravel conventions, and auto-discovery
 should work as expected in most cases:
 
 - Commands are auto-registered with Artisan
@@ -166,20 +166,20 @@ You could access those translations with: `__('demo::messages.welcome');`
 
 ### Customizing the Default Module Structure
 
-When you call `make:module`, Modular will scaffold some basic boilerplate for you. If you 
+When you call `make:module`, Modular will scaffold some basic boilerplate for you. If you
 would like to customize this behavior, you can do so by publishing the `app-modules.php`
 config file and adding your own stubs.
 
 Both filenames and file contents support a number of placeholders. These include:
 
- - `StubBasePath`
- - `StubModuleNamespace`
- - `StubComposerNamespace`
- - `StubModuleNameSingular`
- - `StubModuleNamePlural`
- - `StubModuleName`
- - `StubClassNamePrefix`
- - `StubComposerName`
- - `StubMigrationPrefix`
- - `StubFullyQualifiedTestCaseBase`
- - `StubTestCaseBase`
+- `StubBasePath`
+- `StubModuleNamespace`
+- `StubComposerNamespace`
+- `StubModuleNameSingular`
+- `StubModuleNamePlural`
+- `StubModuleName`
+- `StubClassNamePrefix`
+- `StubComposerName`
+- `StubMigrationPrefix`
+- `StubFullyQualifiedTestCaseBase`
+- `StubTestCaseBase`
