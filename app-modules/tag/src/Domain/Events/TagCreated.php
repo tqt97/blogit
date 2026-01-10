@@ -6,7 +6,7 @@ namespace Modules\Tag\Domain\Events;
 
 use Modules\Tag\Domain\Entities\Tag;
 
-final class TagCreated
+final readonly class TagCreated
 {
-    public function __construct(public readonly Tag $tag) {}
+    public function __construct(public Tag $tag) {}
 }

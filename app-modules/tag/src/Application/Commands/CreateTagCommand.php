@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Application\Commands;
 
-class CreateTagCommand
+final readonly class CreateTagCommand
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $slug,
+        public string $name,
+        public string $slug,
     ) {}
 }

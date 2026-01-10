@@ -14,10 +14,6 @@ final class ListTagsHandler
 
     public function handle(ListTagsQuery $query): LengthAwarePaginator
     {
-        return $this->reader->paginate(
-            search: $query->search,
-            pagination: $query->pagination,
-            sorting: $query->sorting,
-        );
+        return $this->reader->paginate($query->search, $query->pagination, $query->sorting);
     }
 }

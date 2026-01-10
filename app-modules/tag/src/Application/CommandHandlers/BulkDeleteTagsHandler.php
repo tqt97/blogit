@@ -1,20 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Tag\Application\CommandHandlers;
 
 use Modules\Tag\Application\Commands\BulkDeleteTagsCommand;
 use Modules\Tag\Domain\Repositories\TagRepository;
-use Modules\Tag\Domain\ValueObjects\TagId;
 
 final class BulkDeleteTagsHandler
 {
     public function __construct(private readonly TagRepository $repository) {}
 
-    public function handle(BulkDeleteTagsCommand $cmd): void
+    public function handle(BulkDeleteTagsCommand $command): void
     {
-        $ids = array_values(array_unique(array_map('intval', $cmd->ids)));
-        $ids = array_filter($ids, fn ($value) => $value > 0);
-
-        $this->repository->deleteMany(array_map(fn (int $id): TagId => new TagId($id), $ids));
+        $this->repository->deleteMany($command->ids->all());
     }
 }

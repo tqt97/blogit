@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Tag\Presentation\Controllers\Admin;
 
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +20,7 @@ use Modules\Tag\Application\QueryHandlers\ListTagsHandler;
 use Modules\Tag\Application\QueryHandlers\ShowTagHandler;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\ValueObjects\Intent;
+use Modules\Tag\Domain\ValueObjects\TagIds;
 use Modules\Tag\Presentation\Mappers\CreateTagCommandMapper;
 use Modules\Tag\Presentation\Mappers\ListTagsQueryMapper;
 use Modules\Tag\Presentation\Mappers\UpdateTagCommandMapper;
@@ -26,7 +29,7 @@ use Modules\Tag\Presentation\Requests\ListTagsRequest;
 use Modules\Tag\Presentation\Requests\StoreTagRequest;
 use Modules\Tag\Presentation\Requests\UpdateTagRequest;
 
-class TagController
+final class TagController
 {
     public function index(ListTagsRequest $request, ListTagsQueryMapper $mapper, ListTagsHandler $handler): Response
     {
@@ -94,7 +97,7 @@ class TagController
     {
         Gate::authorize('delete', Tag::class);
 
-        $handler->handle(new BulkDeleteTagsCommand($request->validated()));
+        $handler->handle(new BulkDeleteTagsCommand(new TagIds($request->validated('ids'))));
 
         return back()->with($this->flash('Selected tags deleted.'));
     }

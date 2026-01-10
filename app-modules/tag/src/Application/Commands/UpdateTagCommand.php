@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Application\Commands;
 
-final class UpdateTagCommand
+final readonly class UpdateTagCommand
 {
     public function __construct(
         public readonly int $id,

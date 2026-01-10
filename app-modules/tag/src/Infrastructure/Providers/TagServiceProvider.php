@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Tag\Infrastructure\Providers;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
@@ -9,13 +11,11 @@ use Illuminate\Support\ServiceProvider;
 use Modules\Tag\Application\QueryContracts\TagQueryRepository;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\Repositories\TagRepository;
-use Modules\Tag\Domain\Services\TagSlugUniquenessChecker;
 use Modules\Tag\Infrastructure\Listeners\TagCacheInvalidator;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Mappers\TagMapper;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels\CachingTagReader;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels\EloquentTagReader;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Repositories\EloquentTagRepository;
-use Modules\Tag\Infrastructure\Persistence\Eloquent\Rules\EloquentUniqueTagSlugRule;
 use Modules\Tag\Presentation\Policies\TagPolicy;
 
 class TagServiceProvider extends ServiceProvider
@@ -36,7 +36,6 @@ class TagServiceProvider extends ServiceProvider
             );
         });
         $this->app->bind(TagRepository::class, EloquentTagRepository::class);
-        $this->app->bind(TagSlugUniquenessChecker::class, EloquentUniqueTagSlugRule::class);
     }
 
     public function boot(): void

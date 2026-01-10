@@ -2,7 +2,7 @@
 
 return [
     'cache' => [
-        'use_tags' => env('TAG_MODULE_CACHE_TAGS', null),
+        'use_tags' => env('TAG_MODULE_CACHE_TAGS', false),
         'ttl' => env('TAG_MODULE_CACHE_TTL', 3600),
         'prefix' => 'tag:',
     ],

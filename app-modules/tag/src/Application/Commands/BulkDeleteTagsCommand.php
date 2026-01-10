@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Tag\Application\Commands;
 
-final class BulkDeleteTagsCommand
+use Modules\Tag\Domain\ValueObjects\TagIds;
+
+final readonly class BulkDeleteTagsCommand
 {
-    public function __construct(public readonly array $ids) {}
+    public function __construct(public TagIds $ids) {}
 }

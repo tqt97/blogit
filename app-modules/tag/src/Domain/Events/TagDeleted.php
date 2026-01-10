@@ -6,7 +6,7 @@ namespace Modules\Tag\Domain\Events;
 
 use Modules\Tag\Domain\ValueObjects\TagId;
 
-final class TagDeleted
+final readonly class TagDeleted
 {
     public function __construct(public readonly TagId $tagId) {}
 }

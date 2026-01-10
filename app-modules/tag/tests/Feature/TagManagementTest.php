@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Tag\Tests\Feature;
 
 use App\Models\User;
@@ -17,20 +19,14 @@ class TagManagementTest extends TestCase
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
     }
 
-    /**
-     * @test
-     */
-    public function guest_cannot_access_tags(): void
+    public function test_guest_cannot_access_tags(): void
     {
         $response = $this->get(route('tags.index'));
 
         $response->assertRedirect('login');
     }
 
-    /**
-     * @test
-     */
-    public function authenticated_user_can_list_tags(): void
+    public function test_authenticated_user_can_list_tags(): void
     {
         $user = User::factory()->create();
 
@@ -39,10 +35,7 @@ class TagManagementTest extends TestCase
         $response->assertOk();
     }
 
-    /**
-     * @test
-     */
-    public function authenticated_user_can_create_tag(): void
+    public function test_authenticated_user_can_create_tag(): void
     {
         $user = User::factory()->create();
 
@@ -58,10 +51,7 @@ class TagManagementTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
-    public function authenticated_user_can_update_tag(): void
+    public function test_authenticated_user_can_update_tag(): void
     {
         $user = User::factory()->create();
         $tag = TagModel::factory()->create([
@@ -82,10 +72,7 @@ class TagManagementTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
-    public function authenticated_user_can_delete_tag(): void
+    public function test_authenticated_user_can_delete_tag(): void
     {
         $user = User::factory()->create();
         $tag = TagModel::factory()->create();

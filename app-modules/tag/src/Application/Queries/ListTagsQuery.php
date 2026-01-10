@@ -8,7 +8,7 @@ use Modules\Tag\Domain\ValueObjects\Pagination;
 use Modules\Tag\Domain\ValueObjects\SearchTerm;
 use Modules\Tag\Domain\ValueObjects\Sorting;
 
-final class ListTagsQuery
+final readonly class ListTagsQuery
 {
     public function __construct(
         public ?SearchTerm $search,
