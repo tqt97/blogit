@@ -16,7 +16,12 @@ final class ListTagsQueryMapper
     public function __invoke(array $filters): ListTagsQuery
     {
         $search = SearchTerm::fromNullable($filters['search']);
-        $pagination = Pagination::fromInts($filters['page'], $filters['per_page']);
+        $pagination = Pagination::fromInts(
+            page: $filters['page'],
+            perPage: $filters['per_page'],
+            defaultPerPage: (int) config('tag.pagination.default_per_page'),
+            maxPerPage: (int) config('tag.pagination.max_per_page'),
+        );
         $sorting = new Sorting(
             SortField::fromString($filters['sort'], SortField::Id),
             SortDirection::fromString($filters['direction'], SortDirection::Desc),

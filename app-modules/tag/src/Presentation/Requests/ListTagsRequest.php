@@ -4,7 +4,6 @@ namespace Modules\Tag\Presentation\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\Tag\Domain\ValueObjects\Pagination;
 use Modules\Tag\Domain\ValueObjects\SortDirection;
 use Modules\Tag\Domain\ValueObjects\SortField;
 
@@ -28,7 +27,7 @@ class ListTagsRequest extends FormRequest
         return [
             'search' => ['nullable', 'string', 'max:255'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:'.Pagination::MAX_PER_PAGE],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:'.config('tag.pagination.max_per_page')],
             'sort' => ['nullable', Rule::in(array_map(fn ($c) => $c->value, SortField::cases()))],
             'direction' => ['nullable', Rule::in(array_map(fn ($c) => $c->value, SortDirection::cases()))],
         ];
@@ -44,8 +43,8 @@ class ListTagsRequest extends FormRequest
 
         return [
             'search' => $search,
-            'page' => $this->integer('page', Pagination::DEFAULT_PAGE),
-            'per_page' => $this->integer('per_page', Pagination::DEFAULT_PER_PAGE),
+            'page' => $this->integer('page', 1),
+            'per_page' => $this->integer('per_page', (int) config('tag.pagination.default_per_page')),
             'sort' => $this->input('sort', SortField::Id->value),
             'direction' => $this->input('direction', SortDirection::Desc->value),
         ];

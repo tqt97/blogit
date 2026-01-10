@@ -20,8 +20,8 @@ final class TagMapper
             id: new TagId((int) $model->id),
             name: new TagName((string) $model->name),
             slug: new TagSlug((string) $model->slug),
-            createdAt: new TagCreatedAt($model->created_at),
-            updatedAt: new TagUpdatedAt($model->updated_at),
+            createdAt: $model->created_at ? new TagCreatedAt($model->created_at) : null,
+            updatedAt: $model->updated_at ? new TagUpdatedAt($model->updated_at) : null,
         );
     }
 

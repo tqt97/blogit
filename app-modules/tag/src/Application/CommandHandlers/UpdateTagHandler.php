@@ -24,7 +24,7 @@ final class UpdateTagHandler
     public function handle(UpdateTagCommand $command): Tag
     {
         $id = new TagId($command->id);
-        $tag = $this->repository->getById(new TagId($id->value()));
+        $tag = $this->repository->getById($id);
         if (! $tag) {
             throw new TagNotFoundException;
         }

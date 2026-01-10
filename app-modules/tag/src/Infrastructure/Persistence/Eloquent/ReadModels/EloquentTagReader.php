@@ -31,7 +31,7 @@ final class EloquentTagReader implements TagQueryRepository
             ->orderBy($sorting->field->value, $sorting->direction->value)
             ->paginate(perPage: $pagination->perPage, page: $pagination->page)
             ->withQueryString()
-            ->through(fn (TagModel $model) => TagDTO::fromModel($model));
+            ->through(fn (TagModel $model) => $this->mapToDTO($model));
     }
 
     public function find(int $id): ?TagDTO
@@ -44,6 +44,17 @@ final class EloquentTagReader implements TagQueryRepository
             return null;
         }
 
-        return TagDTO::fromModel($model);
+        return $this->mapToDTO($model);
+    }
+
+    private function mapToDTO(TagModel $model): TagDTO
+    {
+        return new TagDTO(
+            id: (int) $model->id,
+            name: (string) $model->name,
+            slug: (string) $model->slug,
+            created_at: $model->created_at?->toISOString() ?? '',
+            updated_at: $model->updated_at?->toISOString() ?? '',
+        );
     }
 }

@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Repositories;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Modules\Tag\Domain\Entities\Tag;
+use Modules\Tag\Domain\Events\TagCreated;
+use Modules\Tag\Domain\Events\TagDeleted;
+use Modules\Tag\Domain\Events\TagsBulkDeleted;
+use Modules\Tag\Domain\Events\TagUpdated;
+use Modules\Tag\Domain\Exceptions\SlugAlreadyExistsException;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\ValueObjects\TagId;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
@@ -18,15 +25,32 @@ final class EloquentTagRepository implements TagRepository
 
     public function save(Tag $tag): Tag
     {
-        return DB::transaction(function () use ($tag): Tag {
-            $model = $tag->id()
-                ? TagModel::query()->findOrFail($tag->id()->value())
-                : new TagModel;
+        $isNew = $tag->id() === null;
 
-            $this->mapper->toPersistence($tag, $model)->save();
+        try {
+            $savedTag = DB::transaction(function () use ($tag, $isNew): Tag {
+                $model = $isNew
+                    ? new TagModel
+                    : TagModel::query()->findOrFail($tag->id()->value());
 
-            return $this->mapper->toEntity($model->fresh());
+                $this->mapper->toPersistence($tag, $model)->save();
+
+                return $this->mapper->toEntity($model->fresh());
+            });
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'Duplicate entry')) {
+                throw new SlugAlreadyExistsException;
+            }
+
+            throw $e;
+        }
+
+        DB::afterCommit(function () use ($savedTag, $isNew) {
+            $event = $isNew ? new TagCreated($savedTag) : new TagUpdated($savedTag);
+            Event::dispatch($event);
         });
+
+        return $savedTag;
     }
 
     public function getById(TagId $id): ?Tag
@@ -49,15 +73,17 @@ final class EloquentTagRepository implements TagRepository
 
     public function delete(TagId $id): void
     {
-        TagModel::query()->whereKey($id->value())->delete();
+        if (TagModel::query()->whereKey($id->value())->delete()) {
+            DB::afterCommit(fn () => Event::dispatch(new TagDeleted($id)));
+        }
     }
 
     public function deleteMany(array $ids): void
     {
-        $idValues = array_map(fn ($id) => $id->value(), $ids);
+        $idValues = array_map(fn (TagId $id) => $id->value(), $ids);
 
-        TagModel::query()
-            ->whereIn('id', $idValues)
-            ->delete();
+        if (TagModel::query()->whereIn('id', $idValues)->delete()) {
+            DB::afterCommit(fn () => Event::dispatch(new TagsBulkDeleted($ids)));
+        }
     }
 }

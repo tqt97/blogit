@@ -50,11 +50,6 @@ final class Tag
         return $this->updatedAt;
     }
 
-    public function setId(TagId $id): void
-    {
-        $this->id = $id;
-    }
-
     public function rename(TagName $name): void
     {
         $this->name = $name;
