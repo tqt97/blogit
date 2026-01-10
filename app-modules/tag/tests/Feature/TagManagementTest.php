@@ -19,14 +19,20 @@ class TagManagementTest extends TestCase
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
     }
 
-    public function test_guest_cannot_access_tags(): void
+    /**
+     * @test
+     */
+    public function guest_cannot_access_tags(): void
     {
         $response = $this->get(route('tags.index'));
 
         $response->assertRedirect('login');
     }
 
-    public function test_authenticated_user_can_list_tags(): void
+    /**
+     * @test
+     */
+    public function authenticated_user_can_list_tags(): void
     {
         $user = User::factory()->create();
 
@@ -35,7 +41,10 @@ class TagManagementTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_authenticated_user_can_create_tag(): void
+    /**
+     * @test
+     */
+    public function authenticated_user_can_create_tag(): void
     {
         $user = User::factory()->create();
 
@@ -51,7 +60,10 @@ class TagManagementTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_user_can_update_tag(): void
+    /**
+     * @test
+     */
+    public function authenticated_user_can_update_tag(): void
     {
         $user = User::factory()->create();
         $tag = TagModel::factory()->create([
@@ -72,7 +84,10 @@ class TagManagementTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_user_can_delete_tag(): void
+    /**
+     * @test
+     */
+    public function authenticated_user_can_delete_tag(): void
     {
         $user = User::factory()->create();
         $tag = TagModel::factory()->create();
