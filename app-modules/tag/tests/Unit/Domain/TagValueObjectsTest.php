@@ -14,7 +14,7 @@ class TagValueObjectsTest extends TestCase
     /**
      * @test
      */
-    public function tag_name_cannot_be_empty(): void
+    public function test_tag_name_cannot_be_empty(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new TagName('');
@@ -23,7 +23,7 @@ class TagValueObjectsTest extends TestCase
     /**
      * @test
      */
-    public function tag_name_trims_whitespace(): void
+    public function test_tag_name_trims_whitespace(): void
     {
         $name = new TagName('  Laravel  ');
         $this->assertEquals('Laravel', $name->value());
@@ -32,7 +32,7 @@ class TagValueObjectsTest extends TestCase
     /**
      * @test
      */
-    public function tag_slug_validates_format(): void
+    public function test_tag_slug_validates_format(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new TagSlug('Invalid Slug!'); // Contains space and exclamation
@@ -41,7 +41,7 @@ class TagValueObjectsTest extends TestCase
     /**
      * @test
      */
-    public function tag_slug_accepts_valid_format(): void
+    public function test_tag_slug_accepts_valid_format(): void
     {
         $slug = new TagSlug('valid-slug-123');
         $this->assertEquals('valid-slug-123', $slug->value());
@@ -50,7 +50,7 @@ class TagValueObjectsTest extends TestCase
     /**
      * @test
      */
-    public function tag_slug_cannot_be_empty(): void
+    public function test_tag_slug_cannot_be_empty(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new TagSlug('');

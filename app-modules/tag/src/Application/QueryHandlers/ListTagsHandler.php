@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Modules\Tag\Application\QueryHandlers;
 
 use Illuminate\Pagination\LengthAwarePaginator;
+use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
 use Modules\Tag\Application\Queries\ListTagsQuery;
-use Modules\Tag\Application\QueryContracts\TagQueryRepository;
 
 final class ListTagsHandler
 {
-    public function __construct(private TagQueryRepository $reader) {}
+    public function __construct(private TagReadModel $reader) {}
 
     public function handle(ListTagsQuery $query): LengthAwarePaginator
     {

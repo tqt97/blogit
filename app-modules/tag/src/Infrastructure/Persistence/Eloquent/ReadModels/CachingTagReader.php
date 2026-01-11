@@ -8,12 +8,12 @@ use Illuminate\Cache\TaggableStore;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Modules\Tag\Application\DTOs\TagDTO;
-use Modules\Tag\Application\QueryContracts\TagQueryRepository;
+use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
 use Modules\Tag\Domain\ValueObjects\Pagination;
 use Modules\Tag\Domain\ValueObjects\SearchTerm;
 use Modules\Tag\Domain\ValueObjects\Sorting;
 
-final class CachingTagReader implements TagQueryRepository
+final class CachingTagReader implements TagReadModel
 {
     public function __construct(
         private readonly EloquentTagReader $decorated,
@@ -45,13 +45,13 @@ final class CachingTagReader implements TagQueryRepository
 
     private function buildPaginateCacheKey(?SearchTerm $search, Pagination $pagination, Sorting $sorting): string
     {
-        $searchKey = $search?->value ?? 'none';
+        $searchHash = $this->hashSearch($search?->value);
         $pageKey = "page={$pagination->page}";
         $perPageKey = "per_page={$pagination->perPage}";
         $sortKey = "sort={$sorting->field->value}";
         $directionKey = "direction={$sorting->direction->value}";
 
-        $key = "{$this->prefix}paginate:{$searchKey}:{$pageKey}:{$perPageKey}:{$sortKey}:{$directionKey}";
+        $key = "{$this->prefix}paginate:{$searchHash}:{$pageKey}:{$perPageKey}:{$sortKey}:{$directionKey}";
 
         if (! $this->shouldUseTags()) {
             $version = $this->cache->get($this->prefix.'list_version', '0');
@@ -60,6 +60,19 @@ final class CachingTagReader implements TagQueryRepository
         }
 
         return $key;
+    }
+
+    private function hashSearch(?string $value): string
+    {
+        $normalized = trim(mb_strtolower((string) $value));
+        $normalized = preg_replace('/\s+/', ' ', $normalized) ?? $normalized;
+
+        // empty search => stable value
+        if ($normalized === '') {
+            return 'none';
+        }
+
+        return sha1($normalized);
     }
 
     private function shouldUseTags(): bool

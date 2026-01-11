@@ -16,12 +16,12 @@ final class TagMapper
 {
     public function toEntity(TagModel $model): Tag
     {
-        return new Tag(
+        return Tag::reconstitute(
             id: new TagId((int) $model->id),
             name: new TagName((string) $model->name),
             slug: new TagSlug((string) $model->slug),
-            createdAt: $model->created_at ? new TagCreatedAt($model->created_at) : null,
-            updatedAt: $model->updated_at ? new TagUpdatedAt($model->updated_at) : null,
+            createdAt: $model->created_at ? new TagCreatedAt($model->created_at->toISOString()) : null,
+            updatedAt: $model->updated_at ? new TagUpdatedAt($model->updated_at->toISOString()) : null,
         );
     }
 

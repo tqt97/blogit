@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\Tag\Domain\ValueObjects;
 
-use DateTimeImmutable;
-
 final class TagUpdatedAt
 {
-    public function __construct(private readonly DateTimeImmutable $value) {}
+    public function __construct(private readonly string $value) {}
 
-    public function value(): DateTimeImmutable
+    public function value(): string
     {
         return $this->value;
     }

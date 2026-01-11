@@ -17,11 +17,6 @@ class TagModel extends Model
         'slug',
     ];
 
-    protected $casts = [
-        'created_at' => 'immutable_datetime',
-        'updated_at' => 'immutable_datetime',
-    ];
-
     protected static function newFactory()
     {
         return \Database\Factories\TagFactory::new();

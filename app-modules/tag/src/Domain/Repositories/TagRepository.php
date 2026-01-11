@@ -9,7 +9,7 @@ use Modules\Tag\Domain\ValueObjects\TagId;
 
 interface TagRepository
 {
-    public function getById(TagId $id): ?Tag;
+    public function find(TagId $id): ?Tag;
 
     public function save(Tag $tag): Tag;
 

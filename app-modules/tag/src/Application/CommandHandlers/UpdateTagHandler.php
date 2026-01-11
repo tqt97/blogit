@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Modules\Tag\Application\CommandHandlers;
 
 use Modules\Tag\Application\Commands\UpdateTagCommand;
-use Modules\Tag\Domain\Entities\Tag;
+use Modules\Tag\Application\Ports\EventBus\EventBus;
+use Modules\Tag\Application\Ports\Transaction\TransactionManager;
 use Modules\Tag\Domain\Exceptions\TagNotFoundException;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\ValueObjects\TagId;
@@ -16,18 +17,25 @@ final class UpdateTagHandler
 {
     public function __construct(
         private readonly TagRepository $repository,
+        private readonly TransactionManager $transactionManager,
+        private readonly EventBus $eventBus,
     ) {}
 
-    public function handle(UpdateTagCommand $command): Tag
+    public function handle(UpdateTagCommand $command): void
     {
-        $tag = $this->repository->getById(new TagId($command->id));
-        if (! $tag) {
-            throw new TagNotFoundException;
-        }
+        $this->transactionManager->withinTransaction(function () use ($command) {
+            $tag = $this->repository->find(new TagId($command->id));
 
-        $tag->rename(new TagName($command->name));
-        $tag->changeSlug(new TagSlug($command->slug));
+            if (! $tag) {
+                throw new TagNotFoundException;
+            }
 
-        return $this->repository->save($tag);
+            $tag->rename(new TagName($command->name));
+            $tag->changeSlug(new TagSlug($command->slug));
+
+            $this->repository->save($tag);
+
+            $this->eventBus->publish($tag->pullEvents());
+        });
     }
 }

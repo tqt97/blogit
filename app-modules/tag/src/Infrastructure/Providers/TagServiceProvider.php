@@ -8,14 +8,18 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Modules\Tag\Application\QueryContracts\TagQueryRepository;
+use Modules\Tag\Application\Ports\EventBus\EventBus;
+use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
+use Modules\Tag\Application\Ports\Transaction\TransactionManager;
 use Modules\Tag\Domain\Entities\Tag;
 use Modules\Tag\Domain\Repositories\TagRepository;
+use Modules\Tag\Infrastructure\Bus\Events\LaravelEventBus;
 use Modules\Tag\Infrastructure\Listeners\TagCacheInvalidator;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Mappers\TagMapper;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels\CachingTagReader;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels\EloquentTagReader;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Repositories\EloquentTagRepository;
+use Modules\Tag\Infrastructure\Transaction\DbTransactionManager;
 use Modules\Tag\Presentation\Policies\TagPolicy;
 
 class TagServiceProvider extends ServiceProvider
@@ -26,7 +30,10 @@ class TagServiceProvider extends ServiceProvider
 
         $this->app->singleton(TagMapper::class);
 
-        $this->app->bind(TagQueryRepository::class, function ($app) {
+        // Application Ports
+        $this->app->bind(TransactionManager::class, DbTransactionManager::class);
+        $this->app->bind(EventBus::class, LaravelEventBus::class);
+        $this->app->bind(TagReadModel::class, function ($app) {
             return new CachingTagReader(
                 decorated: new EloquentTagReader,
                 cache: $app->make(CacheRepository::class),
@@ -35,6 +42,8 @@ class TagServiceProvider extends ServiceProvider
                 prefix: config('tag.cache.prefix')
             );
         });
+
+        // Domain Ports
         $this->app->bind(TagRepository::class, EloquentTagRepository::class);
     }
 

@@ -7,7 +7,8 @@ namespace Modules\Tag\Presentation\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Modules\Tag\Domain\ValueObjects\Intent;
-use Modules\Tag\Presentation\Rules\TagSlugRule;
+use Modules\Tag\Domain\ValueObjects\TagName;
+use Modules\Tag\Domain\ValueObjects\TagSlug;
 
 class StoreTagRequest extends FormRequest
 {
@@ -19,12 +20,13 @@ class StoreTagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['bail', 'required', 'filled', 'string', 'max:255'],
+            'name' => ['bail', 'required', 'filled', 'string', 'max:'.TagName::MAX_LENGTH],
             'slug' => [
                 'bail',
                 'required',
                 'string',
-                new TagSlugRule,
+                'max:'.TagSlug::MAX_LENGTH,
+                'regex:'.TagSlug::REGEX,
                 Rule::unique('tags', 'slug'),
             ],
             'intent' => ['nullable',  Rule::enum(Intent::class)],

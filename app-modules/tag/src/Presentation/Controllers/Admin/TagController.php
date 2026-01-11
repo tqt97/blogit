@@ -7,6 +7,7 @@ namespace Modules\Tag\Presentation\Controllers\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use Modules\Tag\Application\CommandHandlers\BulkDeleteTagsHandler;
@@ -19,6 +20,9 @@ use Modules\Tag\Application\Queries\ShowTagQuery;
 use Modules\Tag\Application\QueryHandlers\ListTagsHandler;
 use Modules\Tag\Application\QueryHandlers\ShowTagHandler;
 use Modules\Tag\Domain\Entities\Tag;
+use Modules\Tag\Domain\Exceptions\SlugAlreadyExistsException;
+use Modules\Tag\Domain\Exceptions\TagInUseException;
+use Modules\Tag\Domain\Exceptions\TagNotFoundException;
 use Modules\Tag\Domain\ValueObjects\Intent;
 use Modules\Tag\Domain\ValueObjects\TagIds;
 use Modules\Tag\Presentation\Mappers\CreateTagCommandMapper;
@@ -54,52 +58,77 @@ final class TagController
     {
         Gate::authorize('create', Tag::class);
 
-        $handler->handle($mapper($request->validated()));
+        $data = $request->validated();
 
-        if ($request->validated('intent') == Intent::CreateAndContinue->value) {
-            return redirect()->route('tags.create')->with($this->flash('Tag created. Continue creating tags.'));
+        try {
+            $handler->handle($mapper($data));
+
+            if ($data['intent'] == Intent::CreateAndContinue->value) {
+                return redirect()->route('tags.create')->with($this->flash('Tag created. Continue creating tags.'));
+            }
+
+            return redirect()->route('tags.index')->with($this->flash('Tag created.'));
+        } catch (SlugAlreadyExistsException) {
+            throw ValidationException::withMessages(['slug' => 'Slug already exists.']);
         }
-
-        return redirect()->route('tags.index')->with($this->flash('Tag created.'));
     }
 
-    public function edit(int $tag, ShowTagHandler $handler): Response
+    public function edit(int $id, ShowTagHandler $handler): Response
     {
         Gate::authorize('update', Tag::class);
 
-        $tagData = $handler->handle(new ShowTagQuery($tag));
-        abort_if(! $tagData, 404);
+        try {
+            $tagData = $handler->handle(new ShowTagQuery($id));
 
-        return Inertia::render('admin/tags/edit', [
-            'tag' => $tagData,
-        ]);
+            return Inertia::render('admin/tags/edit', [
+                'tag' => $tagData,
+            ]);
+        } catch (TagNotFoundException) {
+            abort(404);
+        }
     }
 
-    public function update(int $tag, UpdateTagRequest $request, UpdateTagCommandMapper $mapper, UpdateTagHandler $handler): RedirectResponse
+    public function update(int $id, UpdateTagRequest $request, UpdateTagCommandMapper $mapper, UpdateTagHandler $handler): RedirectResponse
     {
         Gate::authorize('update', Tag::class);
 
-        $handler->handle($mapper($tag, $request->validated()));
+        try {
+            $handler->handle($mapper($id, $request->validated()));
 
-        return back()->with($this->flash('Tag updated.'));
+            return back()->with($this->flash('Tag updated.'));
+        } catch (TagNotFoundException) {
+            abort(404);
+        } catch (SlugAlreadyExistsException) {
+            throw ValidationException::withMessages(['slug' => 'Slug already exists.']);
+        }
     }
 
-    public function destroy(int $tag, DeleteTagHandler $handler): RedirectResponse
+    public function destroy(int $id, DeleteTagHandler $handler): RedirectResponse
     {
         Gate::authorize('delete', Tag::class);
 
-        $handler->handle(new DeleteTagCommand($tag));
+        try {
+            $handler->handle(new DeleteTagCommand($id));
 
-        return back()->with($this->flash('Tag deleted.'));
+            return back()->with($this->flash('Tag deleted.'));
+        } catch (TagNotFoundException) {
+            abort(404);
+        } catch (TagInUseException) {
+            return back()->with($this->flash('Cannot delete tag. It may be in use.', 'error'));
+        }
     }
 
     public function bulkDestroy(BulkDestroyTagRequest $request, BulkDeleteTagsHandler $handler): RedirectResponse
     {
         Gate::authorize('delete', Tag::class);
 
-        $handler->handle(new BulkDeleteTagsCommand(new TagIds($request->validated('ids'))));
+        try {
+            $handler->handle(new BulkDeleteTagsCommand(new TagIds($request->validated('ids'))));
 
-        return back()->with($this->flash('Selected tags deleted.'));
+            return back()->with($this->flash('Selected tags deleted.'));
+        } catch (TagInUseException) {
+            return back()->with($this->flash('One or more tags could not be deleted. They may be in use.', 'error'));
+        }
     }
 
     private function flash(string $message, string $type = 'success'): array

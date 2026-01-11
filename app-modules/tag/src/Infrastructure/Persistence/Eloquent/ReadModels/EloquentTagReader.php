@@ -6,13 +6,13 @@ namespace Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Modules\Tag\Application\DTOs\TagDTO;
-use Modules\Tag\Application\QueryContracts\TagQueryRepository;
+use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
 use Modules\Tag\Domain\ValueObjects\Pagination;
 use Modules\Tag\Domain\ValueObjects\SearchTerm;
 use Modules\Tag\Domain\ValueObjects\Sorting;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Models\TagModel;
 
-final class EloquentTagReader implements TagQueryRepository
+final class EloquentTagReader implements TagReadModel
 {
     public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator
     {

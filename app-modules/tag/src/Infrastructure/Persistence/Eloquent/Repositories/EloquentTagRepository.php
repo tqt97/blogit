@@ -6,14 +6,9 @@ namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Repositories;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Modules\Tag\Domain\Entities\Tag;
-use Modules\Tag\Domain\Events\TagCreated;
-use Modules\Tag\Domain\Events\TagDeleted;
-use Modules\Tag\Domain\Events\TagsBulkDeleted;
-use Modules\Tag\Domain\Events\TagUpdated;
 use Modules\Tag\Domain\Exceptions\SlugAlreadyExistsException;
+use Modules\Tag\Domain\Exceptions\TagInUseException;
 use Modules\Tag\Domain\Exceptions\TagNotFoundException;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\ValueObjects\TagId;
@@ -22,46 +17,30 @@ use Modules\Tag\Infrastructure\Persistence\Eloquent\Models\TagModel;
 
 final class EloquentTagRepository implements TagRepository
 {
-    /** @var string ANSI SQLSTATE for Integrity Constraint Violation */
-    private const SQL_INTEGRITY_VIOLATION = '23000';
-
     public function __construct(private readonly TagMapper $mapper) {}
 
     public function save(Tag $tag): Tag
     {
-        $isNew = $tag->id() === null;
-
         try {
-            $savedTag = DB::transaction(function () use ($tag, $isNew): Tag {
-                try {
-                    $model = $isNew
-                        ? new TagModel
-                        : TagModel::query()->findOrFail($tag->id()->value());
-                } catch (ModelNotFoundException) {
-                    throw new TagNotFoundException;
-                }
+            $model = $tag->id()
+                ? TagModel::query()->findOrFail($tag->id()->value())
+                : new TagModel;
 
-                $this->mapper->toPersistence($tag, $model)->save();
+            $this->mapper->toPersistence($tag, $model)->save();
 
-                return $this->mapper->toEntity($model->fresh());
-            });
+            return $this->mapper->toEntity($model->fresh());
         } catch (QueryException $e) {
-            throw_if(
-                $e->getCode() === self::SQL_INTEGRITY_VIOLATION,
-                SlugAlreadyExistsException::class
-            );
+            if ($this->isSlugUniqueViolation($e)) {
+                throw new SlugAlreadyExistsException($e);
+            }
 
             throw $e;
+        } catch (ModelNotFoundException) {
+            throw new TagNotFoundException;
         }
-
-        DB::afterCommit(function () use ($savedTag, $isNew) {
-            Event::dispatch($isNew ? new TagCreated($savedTag) : new TagUpdated($savedTag));
-        });
-
-        return $savedTag;
     }
 
-    public function getById(TagId $id): ?Tag
+    public function find(TagId $id): ?Tag
     {
         $model = TagModel::query()->find($id->value());
 
@@ -70,8 +49,13 @@ final class EloquentTagRepository implements TagRepository
 
     public function delete(TagId $id): void
     {
-        if (TagModel::query()->whereKey($id->value())->delete()) {
-            DB::afterCommit(fn () => Event::dispatch(new TagDeleted($id)));
+        try {
+            TagModel::query()->whereKey($id->value())->delete();
+        } catch (QueryException $e) {
+            if ($this->isIntegrityConstraintViolation($e)) {
+                throw new TagInUseException($e);
+            }
+            throw $e;
         }
     }
 
@@ -79,8 +63,32 @@ final class EloquentTagRepository implements TagRepository
     {
         $idValues = array_map(fn (TagId $id) => $id->value(), $ids);
 
-        if (TagModel::query()->whereIn('id', $idValues)->delete()) {
-            DB::afterCommit(fn () => Event::dispatch(new TagsBulkDeleted($ids)));
+        try {
+            TagModel::query()->whereIn('id', $idValues)->delete();
+        } catch (QueryException $e) {
+            if ($this->isIntegrityConstraintViolation($e)) {
+                throw new TagInUseException($e);
+            }
+            throw $e;
         }
+    }
+
+    private function isSlugUniqueViolation(QueryException $e): bool
+    {
+        if (! $this->isIntegrityConstraintViolation($e)) {
+            return false;
+        }
+
+        $message = strtolower($e->getMessage());
+
+        return str_contains($message, 'slug');
+    }
+
+    private function isIntegrityConstraintViolation(QueryException $e): bool
+    {
+        // Works for MySQL/SQLite (23000) and Postgres (23505/23503)
+        $sqlState = $e->errorInfo[0] ?? (string) $e->getCode();
+
+        return in_array($sqlState, ['23000', '23505', '23503'], true);
     }
 }

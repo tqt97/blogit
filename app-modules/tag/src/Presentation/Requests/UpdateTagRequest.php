@@ -6,7 +6,8 @@ namespace Modules\Tag\Presentation\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\Tag\Presentation\Rules\TagSlugRule;
+use Modules\Tag\Domain\ValueObjects\TagName;
+use Modules\Tag\Domain\ValueObjects\TagSlug;
 
 class UpdateTagRequest extends FormRequest
 {
@@ -21,12 +22,13 @@ class UpdateTagRequest extends FormRequest
         $tagId = is_object($tag) ? (int) $tag->getKey() : (int) $tag;
 
         return [
-            'name' => ['bail', 'required', 'filled', 'string', 'max:255'],
+            'name' => ['bail', 'required', 'filled', 'string', 'max:'.TagName::MAX_LENGTH],
             'slug' => [
                 'bail',
                 'required',
                 'string',
-                new TagSlugRule,
+                'max:'.TagSlug::MAX_LENGTH,
+                'regex:'.TagSlug::REGEX,
                 Rule::unique('tags', 'slug')->ignore($tagId),
             ],
         ];

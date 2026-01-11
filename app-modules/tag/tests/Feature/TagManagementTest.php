@@ -22,7 +22,7 @@ class TagManagementTest extends TestCase
     /**
      * @test
      */
-    public function guest_cannot_access_tags(): void
+    public function test_guest_cannot_access_tags(): void
     {
         $response = $this->get(route('tags.index'));
 
@@ -32,7 +32,7 @@ class TagManagementTest extends TestCase
     /**
      * @test
      */
-    public function authenticated_user_can_list_tags(): void
+    public function test_authenticated_user_can_list_tags(): void
     {
         $user = User::factory()->create();
 
@@ -44,7 +44,7 @@ class TagManagementTest extends TestCase
     /**
      * @test
      */
-    public function authenticated_user_can_create_tag(): void
+    public function test_authenticated_user_can_create_tag(): void
     {
         $user = User::factory()->create();
 
@@ -63,7 +63,7 @@ class TagManagementTest extends TestCase
     /**
      * @test
      */
-    public function authenticated_user_can_update_tag(): void
+    public function test_authenticated_user_can_update_tag(): void
     {
         $user = User::factory()->create();
         $tag = TagModel::factory()->create([
@@ -87,7 +87,7 @@ class TagManagementTest extends TestCase
     /**
      * @test
      */
-    public function authenticated_user_can_delete_tag(): void
+    public function test_authenticated_user_can_delete_tag(): void
     {
         $user = User::factory()->create();
         $tag = TagModel::factory()->create();
