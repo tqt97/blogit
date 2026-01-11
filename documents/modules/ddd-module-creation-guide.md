@@ -1,378 +1,136 @@
-# 🏗️ How to Create a DDD Module in Laravel
+# DDD Module Generation Guide (Tag Module Example)
 
-**Standard Operating Procedure (SOP) for Modular Monolith Architecture**
-
-This guide outlines the mandatory process for creating new modules following **Domain-Driven Design (DDD)** principles. It serves as the "source of truth" for architectural decisions.
-
-## 📋 Table of Contents
-
-1. [Philosophy & Architecture](#1-philosophy--architecture)
-2. [Directory Structure Explained](#2-directory-structure-explained)
-3. [Layer Communication & Data Flow](#3-layer-communication--data-flow)
-4. [Best Practices & Conventions](#4-best-practices--conventions)
-5. [Step-by-Step Implementation Guide](#5-step-by-step-implementation-guide)
+> **Context:** This guide explains how to generate a DDD-compliant module in Laravel, using `@app-modules/tag` as the reference implementation.
+> **Target Audience:** Developers and AI Agents creating new modules.
 
 ---
 
-## 1. 🧠 Philosophy & Architecture
+## 1. Directory Structure
 
-We adopt a **Hexagonal (Ports & Adapters)** inspired architecture, organized into four distinct layers. The goal is to isolate the **Domain** (Business Logic) from the **Infrastructure** (Framework & Database).
-
-### High-Level Architecture
-
-```mermaid
-graph TD
-    subgraph "External World"
-        Web[Web / API]
-        Console[CLI Commands]
-        DB[(Database)]
-    end
-
-    subgraph "The Module"
-        subgraph "Presentation Layer"
-            Controller
-            CommandCLI
-        end
-
-        subgraph "Application Layer"
-            UseCase[Command / Query Handlers]
-        end
-
-        subgraph "Domain Layer (The Core)"
-            Entity
-            ValueObject
-            RepoInterface[Repository Interface]
-        end
-
-        subgraph "Infrastructure Layer"
-            RepoImpl[Repository Implementation]
-            Model[Eloquent Model]
-        end
-    end
-
-    Web --> Controller
-    Console --> CommandCLI
-    Controller --> UseCase
-    UseCase --> Entity
-    UseCase --> RepoInterface
-    RepoImpl -.->|Implements| RepoInterface
-    RepoImpl --> Model
-    Model <--> DB
-```
-
----
-
-| Layer | Purpose | Primary Responsibility | Dependencies |
-| :--- | :--- | :--- | :--- |
-| **Domain** | **The Core** | Business rules, Entities, Logic. Pure PHP. | **None** (Strictly forbidden to depend on others) |
-| **Application** | **The Orchestrator** | Coordinates use cases (What the app *does*). | Depends on **Domain** |
-| **Infrastructure** | **The Implementation** | Database, Mail, Files, Framework integration. | Depends on **Domain**, **Application**, **Framework** |
-| **Presentation** | **The Interface** | HTTP entry points, Input validation, JSON/View response. | Depends on **Application**, **Domain** |
-
-## 2. 📂 Directory Structure Explained
-
-Every module must follow this exact structure.
+A module must follow this strict directory layout:
 
 ```text
-app-modules/{module-name}/
-├── composer.json               # 📦 Module definition & Autoloading config
-├── database/
-│   ├── factories/              # 🏭 Eloquent Factories (for Tests)
-│   ├── migrations/             # 🗄️ Database Schema Migrations
-│   └── seeders/                # 🌱 Database Seeders
-├── src/
-│   ├── Application/
-│   │   ├── CommandHandlers/    # Write Logic (e.g., CreateTagHandler)
-│   │   ├── Commands/           # Write DTOs (e.g., CreateTagCommand)
-│   │   ├── DTOs/               # Read DTOs (Data Transfer Objects for UI)
-│   │   ├── Queries/            # Read Requests (e.g., ListTagsQuery)
-│   │   ├── QueryContracts/     # Interfaces for reading data (e.g., TagQueryRepository)
-│   │   └── QueryHandlers/      # Logic for reading data
-│   ├── Domain/
-│   │   ├── Entities/
-│   │   │   # Rich Objects with ID (e.g., Tag)
-│   │   ├── Events/
-│   │   │   # Domain Events (e.g., TagCreated)
-│   │   ├── Exceptions/
-│   │   │   # Business Rule Violations (e.g., DuplicateSlugException)
-│   │   ├── Repositories/
-│   │   │   # Interfaces for Persistence (Write only)
-│   │   ├── Services/
-│   │   │   # Complex Domain Logic spanning multiple entities
-│   │   └── ValueObjects/
-│   │       # Immutable properties (e.g., TagName, TagSlug)
-│   ├── Infrastructure/
-│   │   ├── Listeners/
-│   │   │   # Event Listeners
-│   │   ├── Persistence/
-│   │   │   # Database Implementation
-│   │   │   ├── Eloquent/
-│   │   │   │   ├── Mappers/
-│   │   │   │   │   # Entity <--> Model Converter
-│   │   │   │   ├── Models/
-│   │   │   │   │   # Eloquent Models (Active Record)
-│   │   │   │   ├── ReadModels/
-│   │   │   │   │   # Query Implementations (Returns DTOs)
-│   │   │   │   └── Repositories/# Repository implementations (Saves Entities)
-│   │   └── Providers/
-│   │       # Service Provider (Wiring everything together)
-│   └── Presentation/
-│       ├── Controllers/
-│       │   # HTTP Controllers (Inertia/API)
-│       ├── Mappers/
-│       │   # Request -> Command Mappers
-│       ├── Policies/
-│       │   # Authorization Rules (Gates)
-│       ├── Requests/
-│       │   # Input Validation (FormRequest)
-│       └── Routes/
-│           # Route Definitions (web.php)
-└── tests/
-    ├── Feature/                # Integration Tests (Controller -> DB)
-    └── Unit/                   # Unit Tests (Domain Logic)
+src/
+├── Application/
+│   ├── CommandHandlers/  # Business logic for writes (Create, Update, Delete)
+│   ├── Commands/         # DTOs for write operations
+│   ├── DTOs/             # Data Transfer Objects for reads
+│   ├── Ports/            # Interfaces (Ports) for Infrastructure
+│   ├── Queries/          # DTOs for read operations
+│   └── QueryHandlers/    # Business logic for reads
+├── Domain/
+│   ├── Entities/         # Rich Domain Models (State + Behavior)
+│   ├── Events/           # Facts that happened (Past Tense)
+│   ├── Exceptions/       # Domain-specific errors
+│   ├── Repositories/     # Interfaces for persistence (Write only)
+│   └── ValueObjects/     # Immutable, self-validating objects
+├── Infrastructure/
+│   ├── Bus/              # Event Bus adapters
+│   ├── Listeners/        # Event listeners (e.g., Cache Invalidation)
+│   ├── Persistence/      # Database implementation
+│   │   └── Eloquent/     # Eloquent specific (Models, Repos, Mappers)
+│   ├── Providers/        # Service Providers (Wiring)
+│   └── Transaction/      # Transaction management adapters
+└── Presentation/
+    ├── Controllers/      # HTTP Entry points
+    ├── Mappers/          # HTTP Request -> Command Mappers
+    ├── Policies/         # Authorization rules
+    ├── Requests/         # FormRequests (Validation)
+    └── Routes/           # Route definitions
 ```
 
 ---
 
-## 3. 🔄 Layer Communication & Data Flow
+## 2. Step-by-Step Implementation
 
-### Rules of Engagement
+### Step 1: The Domain Layer (Pure PHP)
 
-1. **Strict Dependency Flow:** Dependencies point *inwards*.
-    * `Presentation` -> `Application`
-    * `Application` -> `Domain`
-    * `Infrastructure` -> `Domain`
-2. **No Skipping:** `Presentation` never talks to `Infrastructure` directly.
-3. **Boundary Objects:** Use **DTOs** (Commands/Queries) to cross boundaries.
+Define the "What". No Laravel dependencies allowed here (except basics).
 
-### Communication Flow Diagram
+1.  **Value Objects:** Create `TagName`, `TagSlug`, `TagId`.
+    *   *Why?* Encapsulate validation rules (e.g., `TagName::MAX_LENGTH`).
+    *   *Rule:* Constructors must throw `InvalidArgumentException` on failure.
+2.  **Entities:** Create `Tag`.
+    *   *Why?* To hold state and behavior.
+    *   *Rule:* Use `private __construct`. Expose `create()` (new) and `reconstitute()` (load).
+    *   *Rule:* Use `record()` for events and `pullEvents()` to release them.
+3.  **Repository Interface:** Create `TagRepository`.
+    *   *Why?* To define how to save/delete without knowing about SQL.
+4.  **Events:** Create `TagCreated`, `TagUpdated`.
+    *   *Why?* To notify the system of changes without coupling.
 
-```mermaid
-graph TD
-    User((User))
+### Step 2: The Application Layer (Orchestration)
 
-    subgraph Presentation ["Presentation Layer (Interface)"]
-        Controller
-        Request["FormRequest"]
-        Response["HTTP Response"]
-    end
+Define the "How". Connects Domain to the World.
 
-    subgraph Application ["Application Layer (Orchestration)"]
-        Command["Command (DTO)"]
-        Handler["CommandHandler"]
-        OutputDTO["Result (DTO)"]
-    end
+1.  **Commands/Queries:** Create simple DTOs (`CreateTagCommand`, `ListTagsQuery`).
+2.  **Ports:** Define interfaces for `EventBus` and `TransactionManager`.
+3.  **Handlers:** Create `CreateTagHandler`.
+    *   *Flow:* Transaction -> Domain Factory -> Repository Save -> Event Bus Publish.
+    *   *Rule:* Handlers must not return Eloquent models. Return `void` or simple types/DTOs.
 
-    subgraph Domain ["Domain Layer (Business Logic)"]
-        Entity["Entity / ValueObject"]
-        RepoInterface["Repository Interface"]
-    end
+### Step 3: The Infrastructure Layer (The Glue)
 
-    subgraph Infrastructure ["Infrastructure Layer (Implementation)"]
-        RepoImpl["Repository Implementation"]
-        Model["Eloquent Model"]
-        DB[("Database")]
-    end
+Implement the Interfaces using Laravel.
 
-    %% Flow
-    User -->|1. HTTP Request| Controller
-    Controller -->|2. Validate| Request
-    Controller -->|3. Map to| Command
-    Controller -->|4. Dispatch| Handler
+1.  **Persistence:**
+    *   `TagModel` (Eloquent).
+    *   `TagMapper`: Converts Entity <-> Model.
+    *   `EloquentTagRepository`: Implements `TagRepository`. Catches `QueryException` and throws Domain Exceptions (`TagInUseException`).
+2.  **Read Models:** `EloquentTagReader` (and `CachingTagReader` decorator).
+    *   *Why?* Optimized reads returning DTOs, skipping Entity hydration overhead.
+3.  **Service Provider:** Bind everything in `TagServiceProvider`.
 
-    Handler -->|5. Uses| Entity
-    Handler -->|6. Calls| RepoInterface
+### Step 4: The Presentation Layer (The Interface)
 
-    RepoImpl -.->|Implements| RepoInterface
-    RepoImpl -->|7. Uses| Model
-    Model <-->|8. Read/Write| DB
+Handle HTTP.
 
-    RepoImpl -->|9. Returns| Entity
-    Handler -->|10. Returns| OutputDTO
-
-    Controller -->|11. Returns| Response
-    Response -->|12. HTTP Response| User
-
-    %% Styling
-    style Domain fill:#f9f,stroke:#333,stroke-width:2px
-    style Application fill:#bbf,stroke:#333,stroke-width:2px
-    style Infrastructure fill:#dfd,stroke:#333,stroke-width:2px
-    style Presentation fill:#fdd,stroke:#333,stroke-width:2px
-```
+1.  **Requests:** `StoreTagRequest`. Use Domain constants (`TagName::MAX_LENGTH`) for validation.
+2.  **Mappers:** `CreateTagCommandMapper`. Transforms Request array -> Command Object.
+3.  **Controller:** `TagController`.
+    *   *Rule:* Thin. Authorize -> Validate -> Map -> Delegate to Handler -> Respond.
+    *   *Error Handling:* Catch Domain Exceptions (`SlugAlreadyExistsException`) and throw Validation Exceptions or Abort.
 
 ---
 
-### 📝 Write Flow (Command) - "Creating a Tag"
+## 3. Key Rules & Patterns
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Controller as Presentation (Controller)
-    participant Handler as Application (Handler)
-    participant Domain as Domain (Entity)
-    participant Repo as Infrastructure (Repository)
-    participant DB as Database
+### 1. The "No Leak" Rule
+*   **Controller** never sees **Eloquent Models**. It sees **DTOs**.
+*   **Domain** never sees **Request** objects. It sees **Commands/ValueObjects**.
 
-    User->>Controller: POST /tags (JSON)
-    Controller->>Controller: Validate Request
-    Controller->>Handler: Dispatch CreateTagCommand (DTO)
-    Handler->>Domain: Create Tag Entity
-    Domain-->>Handler: Tag Entity
-    Handler->>Repo: save(Tag Entity)
-    Repo->>Repo: Map Entity -> Model
-    Repo->>DB: INSERT into tags
-    Repo-->>Handler: Return Saved Entity
-    Handler-->>Controller: Return Result
-    Controller-->>User: 201 Created
-```
+### 2. Transaction Management
+*   Transactions are managed in **Command Handlers** via `TransactionManager`.
+*   Repositories do **not** start transactions.
 
-### 📖 Read Flow (Query) - "Listing Tags"
+### 3. Event Handling
+*   Entities `record()` events internally.
+*   Command Handlers `pullEvents()` and `publish()` them via `EventBus` *after* persistence.
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Controller as Presentation (Controller)
-    participant Reader as Infrastructure (ReadModel)
-    participant DB as Database
+### 4. Exception Handling
+*   Infrastructure (Repository) catches SQL errors (e.g., integrity violation).
+*   It throws **Domain Exceptions** (`TagInUseException`).
+*   Controller catches Domain Exception and decides the HTTP response.
 
-    User->>Controller: GET /tags
-    Controller->>Reader: paginate(ListTagsQuery)
-    Reader->>DB: SELECT * FROM tags (Optimized)
-    DB-->>Reader: Raw Rows
-    Reader->>Reader: Map Rows -> TagDTOs
-    Reader-->>Controller: Collection<TagDTO>
-    Controller-->>User: JSON Response
-```
+### 5. Caching
+*   Use the **Decorator Pattern**. `CachingTagReader` wraps `EloquentTagReader`.
+*   Invalidate cache using **Event Listeners** (`TagCacheInvalidator` listens to `TagUpdated`).
 
 ---
 
-## 4. ✅ Best Practices & Conventions
+## 4. Common Pitfalls (Don't do this)
 
-### 🎨 Naming Conventions
-
-| Type | Pattern | Example |
-| --- | --- | --- |
-| Command | `Verb` + `Noun` + `Command` | `CreateTagCommand`, `PublishPostCommand` |
-| Command Handler | `CommandName` + `Handler` | `CreateTagHandler` |
-| Query | `Verb` + `Noun` + `Query` | `GetTagQuery`, `ListTagsQuery` |
-| Query Handler | `QueryName` + `Handler` | `GetTagHandler`, `ListTagsHandler` |
-| Write Repository (Port) | `Entity` + `Repository` | `TagRepository` (interface) |
-| Read Repository (Port) | `Entity` + `QueryRepository` | `TagQueryRepository` (interface) |
-| Eloquent Adapter (Write) | `Eloquent` + `Entity` + `Repository` | `EloquentTagRepository` |
-| Eloquent Adapter (Read) | `Eloquent` + `Entity` + `Reader` | `EloquentTagReader` |
-
-### 🛡️ Coding Standards
-
-1. **Strict Types:** Always use `declare(strict_types=1);`.
-2. **Value Objects:** Never pass raw strings for core data. Use `Email`, `Slug`, `Price`.
-3. **Thin Controllers:** Controllers only:
-    * Authorize (`Gate`)
-    * Validate (`FormRequest`)
-    * Dispatch (`Handler`)
-    * Respond (`Response`)
-4. **No Eloquent in Domain:** Entities should NOT extend `Eloquent\Model`.
+*   ❌ **Don't** return `Tag` Entity from a Query Handler. Return `TagDTO`.
+*   ❌ **Don't** use `DB::transaction` directly in Handlers. Use the Port.
+*   ❌ **Don't** put validation logic in Controllers. Put it in FormRequests (structure) and ValueObjects (rules).
+*   ❌ **Don't** let Domain Objects access the Database.
 
 ---
 
-## 5. 🚀 Step-by-Step Implementation Guide
+## 5. Generator Command Logic
 
-Follow this sequence to build the **Tag** module.
-
-### Step 1: 💎 Define the Domain (The "What")
-
-*Focus on business logic, validation, and types. Ignore the database.*
-
-```php
-// src/Domain/ValueObjects/TagName.php
-final class TagName {
-    public function __construct(private string $value) { /* Validation */ }
-    public function value(): string { return $this->value; }
-}
-
-// src/Domain/Entities/Tag.php
-class Tag {
-    public function __construct(private ?TagId $id, private TagName $name) {}
-    public static function create(TagName $name): self { 
-        return new self(null, $name); 
-    }
-}
-
-// src/Domain/Repositories/TagRepository.php
-interface TagRepository {
-    public function save(Tag $tag): Tag;
-}
-```
-
-### Step 2: ⚙️ Define the Application (The "How")
-
-*Define the user's intent.*
-
-```php
-// src/Application/Commands/CreateTagCommand.php
-class CreateTagCommand {
-    public function __construct(public readonly string $name) {}
-}
-
-// src/Application/CommandHandlers/CreateTagHandler.php
-class CreateTagHandler {
-    public function __construct(private TagRepository $repo) {}
-    public function handle(CreateTagCommand $cmd): void {
-        $tag = Tag::create(new TagName($cmd->name));
-        $this->repo->save($tag);
-    }
-}
-```
-
-### Step 3: 🏗️ Implement Infrastructure (The "Where")
-
-*Connect to the Database.*
-
-```php
-// src/Infrastructure/Persistence/Eloquent/Models/TagModel.php
-class TagModel extends Model { protected $table = 'tags'; }
-
-// src/Infrastructure/Persistence/Eloquent/Repositories/EloquentTagRepository.php
-class EloquentTagRepository implements TagRepository {
-    public function save(Tag $tag): Tag {
-        // 1. Map Entity -> Model
-        $model = new TagModel(['name' => $tag->name()->value()]);
-        // 2. Save
-        $model->save();
-        // 3. Map Model -> Entity (Return with ID)
-        return new Tag(new TagId($model->id), new TagName($model->name));
-    }
-}
-```
-
-### Step 4: 🔌 Presentation (The "Interface")
-
-*Expose to the Web.*
-
-```php
-// src/Presentation/Controllers/Admin/TagController.php
-class TagController {
-    public function store(StoreTagRequest $request, CreateTagHandler $handler) {
-        Gate::authorize('create', Tag::class);
-        $handler->handle(new CreateTagCommand($request->validated('name')));
-        return redirect()->route('tags.index');
-    }
-}
-```
-
-### Step 5: 📦 Wiring & Autoloading
-
-*Register the module.*
-
-```json
-// composer.json
-{
-    "autoload": {
-        "psr-4": { "Modules\\Tag\\": "src/" }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [ "Modules\\Tag\\Infrastructure\\Providers\\TagServiceProvider" ]
-        }
-    }
-}
-```
+When updating the generator command, ensure it creates:
+1.  **All 4 Layers** folders.
+2.  **Standard Ports** (`EventBus`, `TransactionManager`) if missing.
+3.  **Mapper** for Entity <-> Model.
+4.  **Read Model** interface and implementation.
