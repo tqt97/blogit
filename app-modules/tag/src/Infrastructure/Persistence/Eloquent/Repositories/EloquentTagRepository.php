@@ -12,6 +12,7 @@ use Modules\Tag\Domain\Exceptions\TagInUseException;
 use Modules\Tag\Domain\Exceptions\TagNotFoundException;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\ValueObjects\TagId;
+use Modules\Tag\Domain\ValueObjects\TagIds;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Mappers\TagMapper;
 use Modules\Tag\Infrastructure\Persistence\Eloquent\Models\TagModel;
 
@@ -28,9 +29,13 @@ final class EloquentTagRepository implements TagRepository
 
             $this->mapper->toPersistence($tag, $model)->save();
 
-            return $this->mapper->toEntity($model->fresh());
+            if ($tag->id()) {
+                return $tag;
+            }
+
+            return $tag->withId(new TagId((int) $model->id));
         } catch (QueryException $e) {
-            if ($this->isSlugUniqueViolation($e)) {
+            if ($this->isUniqueConstraintViolation($e)) {
                 throw new SlugAlreadyExistsException($e);
             }
 
@@ -50,45 +55,71 @@ final class EloquentTagRepository implements TagRepository
     public function delete(TagId $id): void
     {
         try {
-            TagModel::query()->whereKey($id->value())->delete();
+            $count = TagModel::query()->whereKey($id->value())->delete();
+
+            if ($count === 0) {
+                throw new TagNotFoundException;
+            }
         } catch (QueryException $e) {
-            if ($this->isIntegrityConstraintViolation($e)) {
+            if ($this->isForeignKeyConstraintViolation($e)) {
                 throw new TagInUseException($e);
             }
             throw $e;
         }
     }
 
-    public function deleteMany(array $ids): void
+    public function deleteMany(TagIds $ids): void
     {
-        $idValues = array_map(fn (TagId $id) => $id->value(), $ids);
+        $idValues = $ids->toScalars();
 
         try {
             TagModel::query()->whereIn('id', $idValues)->delete();
         } catch (QueryException $e) {
-            if ($this->isIntegrityConstraintViolation($e)) {
+            if ($this->isForeignKeyConstraintViolation($e)) {
                 throw new TagInUseException($e);
             }
             throw $e;
         }
     }
 
-    private function isSlugUniqueViolation(QueryException $e): bool
+    private function isUniqueConstraintViolation(QueryException $e): bool
     {
-        if (! $this->isIntegrityConstraintViolation($e)) {
-            return false;
+        // 23505 (Postgres) or 1062 (MySQL) or 23000 (SQLite/Generic)
+        $sqlState = $e->errorInfo[0] ?? (string) $e->getCode();
+        $errorCode = $e->errorInfo[1] ?? 0;
+
+        if (in_array($sqlState, ['23505', '23000']) || $errorCode === 1062) {
+            $message = strtolower($e->getMessage());
+
+            // Check generic/common indicators
+            if (str_contains($message, 'duplicate entry') ||
+                str_contains($message, 'unique constraint') ||
+                str_contains($message, 'tags_slug_unique')) {
+                return true;
+            }
         }
 
-        $message = strtolower($e->getMessage());
-
-        return str_contains($message, 'slug');
+        return false;
     }
 
-    private function isIntegrityConstraintViolation(QueryException $e): bool
+    private function isForeignKeyConstraintViolation(QueryException $e): bool
     {
-        // Works for MySQL/SQLite (23000) and Postgres (23505/23503)
+        // 23503 (Postgres/Generic) or 1451/1452 (MySQL)
         $sqlState = $e->errorInfo[0] ?? (string) $e->getCode();
+        $errorCode = $e->errorInfo[1] ?? 0;
 
-        return in_array($sqlState, ['23000', '23505', '23503'], true);
+        if ($sqlState === '23503') {
+            return true;
+        }
+
+        // MySQL FK Error
+        if (in_array($errorCode, [1451, 1452])) {
+            return true;
+        }
+
+        // SQLite FK error often 23000 with specific message, but usually 23503 if extended result codes used
+        // or just strict check on 23503 which is standard ANSI SQL state for FK violation
+
+        return false;
     }
 }

@@ -99,4 +99,79 @@ class TagManagementTest extends TestCase
             'id' => $tag->id,
         ]);
     }
+
+    /**
+     * @test
+     */
+    public function test_create_tag_fails_with_duplicate_slug(): void
+    {
+        $user = User::factory()->create();
+        TagModel::factory()->create(['slug' => 'existing-slug']);
+
+        $response = $this->actingAs($user)->post(route('tags.store'), [
+            'name' => 'New Tag',
+            'slug' => 'existing-slug',
+        ]);
+
+        $response->assertSessionHasErrors(['slug']);
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_tag_fails_with_duplicate_slug(): void
+    {
+        $user = User::factory()->create();
+        TagModel::factory()->create(['slug' => 'existing-slug']);
+        $tag = TagModel::factory()->create(['slug' => 'my-slug']);
+
+        $response = $this->actingAs($user)->put(route('tags.update', $tag->id), [
+            'name' => 'Updated Tag',
+            'slug' => 'existing-slug',
+        ]);
+
+        $response->assertSessionHasErrors(['slug']);
+    }
+
+    /**
+     * @test
+     */
+    public function test_bulk_delete_tags(): void
+    {
+        $user = User::factory()->create();
+        $tags = TagModel::factory()->count(3)->create();
+        $ids = $tags->pluck('id')->all();
+
+        $response = $this->actingAs($user)->delete(route('tags.bulk-destroy'), [
+            'ids' => $ids,
+        ]);
+
+        $response->assertRedirect();
+        foreach ($ids as $id) {
+            $this->assertDatabaseMissing('tags', ['id' => $id]);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function test_update_does_not_fire_event_if_no_changes(): void
+    {
+        $user = User::factory()->create();
+        $tag = TagModel::factory()->create([
+            'name' => 'Original Name',
+            'slug' => 'original-slug',
+        ]);
+
+        \Illuminate\Support\Facades\Event::fake([
+            \Modules\Tag\Domain\Events\TagUpdated::class,
+        ]);
+
+        $this->actingAs($user)->put(route('tags.update', $tag->id), [
+            'name' => 'Original Name',
+            'slug' => 'original-slug',
+        ]);
+
+        \Illuminate\Support\Facades\Event::assertNotDispatched(\Modules\Tag\Domain\Events\TagUpdated::class);
+    }
 }

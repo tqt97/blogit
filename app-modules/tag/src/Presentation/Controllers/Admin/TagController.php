@@ -63,7 +63,7 @@ final class TagController
         try {
             $handler->handle($mapper($data));
 
-            if ($data['intent'] == Intent::CreateAndContinue->value) {
+            if ($data['intent'] === Intent::CreateAndContinue->value) {
                 return redirect()->route('tags.create')->with($this->flash('Tag created. Continue creating tags.'));
             }
 
@@ -93,9 +93,9 @@ final class TagController
         Gate::authorize('update', Tag::class);
 
         try {
-            $handler->handle($mapper($id, $request->validated()));
+            $rs = $handler->handle($mapper($id, $request->validated()));
 
-            return back()->with($this->flash('Tag updated.'));
+            return back()->with($this->flash($rs->id->value().'Tag updated.'));
         } catch (TagNotFoundException) {
             abort(404);
         } catch (SlugAlreadyExistsException) {

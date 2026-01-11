@@ -21,9 +21,9 @@ final class BulkDeleteTagsHandler
     public function handle(BulkDeleteTagsCommand $command): void
     {
         $this->transactionManager->withinTransaction(function () use ($command) {
-            $this->repository->deleteMany($command->ids->all());
+            $this->repository->deleteMany($command->ids);
 
-            $this->eventBus->publish([new TagsBulkDeleted($command->ids->all())]);
+            $this->eventBus->publish([new TagsBulkDeleted($command->ids)]);
         });
     }
 }

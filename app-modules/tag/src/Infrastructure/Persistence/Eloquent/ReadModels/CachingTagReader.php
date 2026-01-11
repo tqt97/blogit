@@ -6,7 +6,8 @@ namespace Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels;
 
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Modules\Tag\Application\DTOs\TagDTO;
 use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
 use Modules\Tag\Domain\ValueObjects\Pagination;
@@ -38,9 +39,24 @@ final class CachingTagReader implements TagReadModel
             ? $this->cache->tags($this->prefix.'list')
             : $this->cache;
 
-        return $cache->remember($key, $this->ttl, function () use ($search, $pagination, $sorting) {
-            return $this->decorated->paginate($search, $pagination, $sorting);
+        $data = $cache->remember($key, $this->ttl, function () use ($search, $pagination, $sorting) {
+            $paginator = $this->decorated->paginate($search, $pagination, $sorting);
+
+            return [
+                'items' => $paginator->items(),
+                'total' => $paginator->total(),
+                'per_page' => $paginator->perPage(),
+                'current_page' => $paginator->currentPage(),
+            ];
         });
+
+        return new LengthAwarePaginator(
+            $data['items'],
+            $data['total'],
+            $data['per_page'],
+            $data['current_page'],
+            ['path' => Paginator::resolveCurrentPath()]
+        );
     }
 
     private function buildPaginateCacheKey(?SearchTerm $search, Pagination $pagination, Sorting $sorting): string

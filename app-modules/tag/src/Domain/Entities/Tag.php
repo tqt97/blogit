@@ -6,11 +6,9 @@ namespace Modules\Tag\Domain\Entities;
 
 use Modules\Tag\Domain\Events\TagCreated;
 use Modules\Tag\Domain\Events\TagUpdated;
-use Modules\Tag\Domain\ValueObjects\TagCreatedAt;
 use Modules\Tag\Domain\ValueObjects\TagId;
 use Modules\Tag\Domain\ValueObjects\TagName;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
-use Modules\Tag\Domain\ValueObjects\TagUpdatedAt;
 
 final class Tag
 {
@@ -21,26 +19,19 @@ final class Tag
         private readonly ?TagId $id,
         private TagName $name,
         private TagSlug $slug,
-        private readonly ?TagCreatedAt $createdAt = null,
-        private readonly ?TagUpdatedAt $updatedAt = null,
     ) {}
 
     public static function create(TagName $name, TagSlug $slug): self
     {
-        $tag = new self(null, $name, $slug);
-        $tag->record(new TagCreated($tag));
-
-        return $tag;
+        return new self(null, $name, $slug);
     }
 
     public static function reconstitute(
         TagId $id,
         TagName $name,
         TagSlug $slug,
-        ?TagCreatedAt $createdAt,
-        ?TagUpdatedAt $updatedAt
     ): self {
-        return new self($id, $name, $slug, $createdAt, $updatedAt);
+        return new self($id, $name, $slug);
     }
 
     public function id(): ?TagId
@@ -58,26 +49,37 @@ final class Tag
         return $this->slug;
     }
 
-    public function createdAt(): ?TagCreatedAt
+    public function withId(TagId $id): self
     {
-        return $this->createdAt;
+        $tag = new self(
+            $id,
+            $this->name,
+            $this->slug,
+        );
+
+        foreach ($this->events as $event) {
+            $tag->record($event);
+        }
+
+        if ($this->id === null) {
+            $tag->record(new TagCreated($id, $this->name, $this->slug));
+        }
+
+        return $tag;
     }
 
-    public function updatedAt(): ?TagUpdatedAt
+    public function update(TagName $name, TagSlug $slug): void
     {
-        return $this->updatedAt;
-    }
+        if ($this->name->value() === $name->value() && $this->slug->value() === $slug->value()) {
+            return;
+        }
 
-    public function rename(TagName $name): void
-    {
         $this->name = $name;
-        $this->record(new TagUpdated($this));
-    }
-
-    public function changeSlug(TagSlug $slug): void
-    {
         $this->slug = $slug;
-        $this->record(new TagUpdated($this));
+
+        if ($this->id) {
+            $this->record(new TagUpdated($this->id, $this->name, $this->slug));
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Tag\Presentation\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Modules\Tag\Domain\ValueObjects\TagName;
 use Modules\Tag\Domain\ValueObjects\TagSlug;
@@ -32,5 +33,14 @@ class UpdateTagRequest extends FormRequest
                 Rule::unique('tags', 'slug')->ignore($tagId),
             ],
         ];
+    }
+
+    public function prepareForValidation(): void
+    {
+        if ($this->has('slug')) {
+            $this->merge([
+                'slug' => Str::slug($this->input('slug')),
+            ]);
+        }
     }
 }

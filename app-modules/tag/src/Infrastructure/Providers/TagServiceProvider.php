@@ -45,6 +45,14 @@ class TagServiceProvider extends ServiceProvider
 
         // Domain Ports
         $this->app->bind(TagRepository::class, EloquentTagRepository::class);
+
+        $this->app->bind(TagCacheInvalidator::class, function ($app) {
+            return new TagCacheInvalidator(
+                $app->make(CacheRepository::class),
+                (string) config('tag.cache.prefix'),
+                (bool) config('tag.cache.use_tags'),
+            );
+        });
     }
 
     public function boot(): void

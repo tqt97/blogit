@@ -8,5 +8,5 @@ use Modules\Tag\Domain\ValueObjects\TagId;
 
 final readonly class TagDeleted
 {
-    public function __construct(public readonly TagId $tagId) {}
+    public function __construct(public TagId $tagId) {}
 }

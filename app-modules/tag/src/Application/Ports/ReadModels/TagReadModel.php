@@ -12,7 +12,13 @@ use Modules\Tag\Domain\ValueObjects\Sorting;
 
 interface TagReadModel
 {
+    /**
+     * Paginate tags based on search criteria and sorting.
+     */
     public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator;
 
+    /**
+     * Find a tag DTO by its ID.
+     */
     public function find(int $id): ?TagDTO;
 }

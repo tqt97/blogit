@@ -18,10 +18,13 @@ final class TagCacheInvalidator
 
     private readonly ?bool $useTags;
 
-    public function __construct(private readonly CacheRepository $cache)
-    {
-        $this->prefix = (string) config('tag.cache.prefix');
-        $this->useTags = config('tag.cache.use_tags');
+    public function __construct(
+        private readonly CacheRepository $cache,
+        string $prefix,
+        bool $useTags,
+    ) {
+        $this->prefix = $prefix;
+        $this->useTags = $useTags;
     }
 
     public function handleTagCreation(TagCreated $event): void
@@ -31,7 +34,7 @@ final class TagCacheInvalidator
 
     public function handleTagUpdate(TagUpdated $event): void
     {
-        $this->cache->forget("{$this->prefix}find:{$event->tag->id()->value()}");
+        $this->cache->forget("{$this->prefix}find:{$event->id->value()}");
         $this->flushListCache();
     }
 
@@ -43,7 +46,7 @@ final class TagCacheInvalidator
 
     public function handleTagsBulkDeletion(TagsBulkDeleted $event): void
     {
-        foreach ($event->tagIds as $tagId) {
+        foreach ($event->tagIds->all() as $tagId) {
             $this->cache->forget("{$this->prefix}find:{$tagId->value()}");
         }
         $this->flushListCache();
@@ -68,7 +71,7 @@ final class TagCacheInvalidator
 
     private function shouldUseTags(): bool
     {
-        if ($this->useTags === false) {
+        if (! $this->useTags) {
             return false;
         }
 

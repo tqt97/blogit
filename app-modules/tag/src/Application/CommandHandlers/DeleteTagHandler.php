@@ -8,7 +8,6 @@ use Modules\Tag\Application\Commands\DeleteTagCommand;
 use Modules\Tag\Application\Ports\EventBus\EventBus;
 use Modules\Tag\Application\Ports\Transaction\TransactionManager;
 use Modules\Tag\Domain\Events\TagDeleted;
-use Modules\Tag\Domain\Exceptions\TagNotFoundException;
 use Modules\Tag\Domain\Repositories\TagRepository;
 use Modules\Tag\Domain\ValueObjects\TagId;
 
@@ -24,11 +23,6 @@ final class DeleteTagHandler
     {
         $this->transactionManager->withinTransaction(function () use ($command) {
             $id = new TagId($command->id);
-
-            // Ensure existence
-            if (! $this->repository->find($id)) {
-                throw new TagNotFoundException;
-            }
 
             $this->repository->delete($id);
 
