@@ -21,4 +21,12 @@ interface TagReadModel
      * Find a tag DTO by its ID.
      */
     public function find(int $id): ?TagDTO;
+
+    /**
+     * Find multiple tag DTOs by their IDs.
+     *
+     * @param  int[]  $ids
+     * @return TagDTO[]
+     */
+    public function getByIds(array $ids): array;
 }

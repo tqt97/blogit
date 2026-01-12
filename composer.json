@@ -17,6 +17,7 @@
         "laravel/horizon": "^5.41",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
+        "modules/post": "*",
         "modules/tag": "*"
     },
     "require-dev": {

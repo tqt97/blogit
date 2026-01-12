@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f15b07531e4795e2c32810fa62867a0",
+    "content-hash": "3e221fe3b90a1f85fbfcbf5312874448",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3241,6 +3241,36 @@
                 "source": "https://github.com/marc-mabe/php-enum/tree/v4.7.2"
             },
             "time": "2025-09-14T11:18:39+00:00"
+        },
+        {
+            "name": "modules/post",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/post",
+                "reference": "c80fe06c6786e3e028252e878b576a06894011c3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": "Modules\\Post\\Infrastructure\\Providers\\PostServiceProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Post\\": "src/",
+                    "Modules\\Post\\Tests\\": "tests/",
+                    "Modules\\Post\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Post\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "modules/tag",

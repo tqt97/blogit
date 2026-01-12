@@ -47,6 +47,20 @@ final class EloquentTagReader implements TagReadModel
         return $this->mapToDTO($model);
     }
 
+    public function getByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        return TagModel::query()
+            ->select(['id', 'name', 'slug', 'created_at', 'updated_at'])
+            ->whereIn('id', $ids)
+            ->get()
+            ->map(fn (TagModel $model) => $this->mapToDTO($model))
+            ->all();
+    }
+
     private function mapToDTO(TagModel $model): TagDTO
     {
         return new TagDTO(

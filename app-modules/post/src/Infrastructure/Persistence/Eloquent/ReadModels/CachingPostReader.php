@@ -2,57 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Modules\Tag\Infrastructure\Persistence\Eloquent\ReadModels;
+namespace Modules\Post\Infrastructure\Persistence\Eloquent\ReadModels;
 
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Modules\Tag\Application\DTOs\TagDTO;
-use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
-use Modules\Tag\Domain\ValueObjects\Pagination;
-use Modules\Tag\Domain\ValueObjects\SearchTerm;
-use Modules\Tag\Domain\ValueObjects\Sorting;
+use Modules\Post\Application\DTOs\PostDTO;
+use Modules\Post\Application\Ports\ReadModels\PostReadModel;
+use Modules\Post\Domain\ValueObjects\Pagination;
+use Modules\Post\Domain\ValueObjects\SearchTerm;
+use Modules\Post\Domain\ValueObjects\Sorting;
 
-final class CachingTagReader implements TagReadModel
+final class CachingPostReader implements PostReadModel
 {
     public function __construct(
-        private readonly EloquentTagReader $decorated,
+        private readonly EloquentPostReader $decorated,
         private readonly CacheRepository $cache,
         private readonly int $ttl,
         private readonly ?bool $useTags,
         private readonly string $prefix,
     ) {}
 
-    public function find(int $id): ?TagDTO
+    public function find(int $id): ?PostDTO
     {
         $key = "{$this->prefix}find:{$id}";
 
         return $this->cache->remember($key, $this->ttl, fn () => $this->decorated->find($id));
-    }
-
-    public function getByIds(array $ids): array
-    {
-        if (empty($ids)) {
-            return [];
-        }
-
-        // Simple implementation: fetch individually from cache or delegated reader
-        // A optimized multi-get could be implemented but let's stick to correctness first.
-        // Or better: delegate to decorated reader if we don't want to complex cache logic for multi-get right now.
-        // For strict caching, we should map each ID to a key.
-
-        // Let's rely on decorated reader for now as multi-get caching is complex to implement robustly without proper mget support or looping.
-        // Loop approach:
-        $results = [];
-        foreach ($ids as $id) {
-            $dto = $this->find($id);
-            if ($dto) {
-                $results[] = $dto;
-            }
-        }
-
-        return $results;
     }
 
     public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator
