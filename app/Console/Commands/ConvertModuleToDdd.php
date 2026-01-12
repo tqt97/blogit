@@ -50,6 +50,8 @@ class ConvertModuleToDdd extends Command
         $this->createApplicationFiles($path, $name);
         $this->createInfrastructureFiles($path, $name);
         $this->createPresentationFiles($path, $name);
+        $this->createFactories($path, $name);
+        $this->createSeeders($path, $name);
     }
 
     protected function createApplicationFiles($path, $name)
@@ -690,6 +692,97 @@ PHP
         );
     }
 
+    protected function createFactories($path, $name)
+    {
+        $this->createFileIfNotExists(
+            "{$path}/database/factories/{$name}ModelFactory.php",
+            <<<PHP
+<?php
+
+namespace Modules\\{$name}\\Database\\Factories;
+
+use Illuminate\\Database\\Eloquent\\Factories\\Factory;
+use Illuminate\\Support\\Str;
+use Modules\\{$name}\\Infrastructure\\Persistence\\Eloquent\\Models\\{$name}Model;
+
+/**
+ * @extends \\Illuminate\\Database\\Eloquent\\Factories\\Factory<{$name}Model>
+ */
+class {$name}ModelFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected \$model = {$name}Model::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            // Add code here
+        ];
+    }
+}
+PHP
+        );
+    }
+
+    protected function createSeeders($path, $name)
+    {
+        // Main DatabaseSeeder
+        $this->createFileIfNotExists(
+            "{$path}/database/seeders/DatabaseSeeder.php",
+            <<<PHP
+<?php
+
+namespace Modules\\{$name}\\Database\\Seeders;
+
+use Illuminate\\Database\\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        \$this->call({$name}Seeder::class);
+    }
+}
+PHP
+        );
+
+        // Module-specific Seeder
+        $this->createFileIfNotExists(
+            "{$path}/database/seeders/{$name}Seeder.php",
+            <<<PHP
+<?php
+
+namespace Modules\\{$name}\\Database\\Seeders;
+
+use Illuminate\\Database\\Seeder;
+use Modules\\{$name}\\Infrastructure\\Persistence\\Eloquent\\Models\\{$name}Model;
+
+class {$name}Seeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        // Add code here
+    }
+}
+PHP
+        );
+    }
+
     protected function createFileIfNotExists($path, $content)
     {
         $directory = dirname($path);
@@ -706,6 +799,8 @@ PHP
     {
         $dirs = [
             'config',
+            'database/factories',
+            'database/seeders',
             'src/Application/CommandHandlers',
             'src/Application/Commands',
             'src/Application/DTOs',
@@ -883,3 +978,4 @@ PHP;
         }
     }
 }
+
