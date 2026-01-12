@@ -6,6 +6,7 @@ namespace Modules\Tag\Infrastructure\Persistence\Eloquent\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Tag\Database\Factories\TagModelFactory;
 
 class TagModel extends Model
 {
@@ -21,6 +22,6 @@ class TagModel extends Model
 
     protected static function newFactory()
     {
-        return \Database\Factories\TagFactory::new();
+        return TagModelFactory::new();
     }
 }
