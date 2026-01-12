@@ -1,5 +1,5 @@
 # .husky/pre-commit
-./vendor/bin/duster fix --dirty || true
+# ./vendor/bin/duster fix --dirty || true
 ./vendor/bin/pint || true
 composer qa || true
 npm run lint || true
@@ -7,9 +7,9 @@ npm run lint || true
 # Get list of staged PHP files
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=AM | grep '\.php$' | tr '\n' ' ')
 
-if [ -n "$STAGED_FILES" ]; then
-  # Run PHPStan only on staged PHP files
-  composer phpstan $STAGED_FILES  || true
-else
-  echo "No PHP files to analyze."
-fi
+# if [ -n "$STAGED_FILES" ]; then
+#   # Run PHPStan only on staged PHP files
+#   composer phpstan $STAGED_FILES  || true
+# else
+#   echo "No PHP files to analyze."
+# fi

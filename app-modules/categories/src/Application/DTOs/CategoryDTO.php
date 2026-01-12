@@ -15,7 +15,7 @@ class CategoryDTO
         public readonly ?int $parent_id,
         public readonly ?string $description,
         public readonly bool $is_active,
-        public readonly ?string $created_at = null,
+        public readonly ?string $created_at,
         public readonly ?array $children_recursive = null
     ) {}
 
@@ -24,11 +24,11 @@ class CategoryDTO
         return new self(
             id: $category->id()?->value(),
             name: $category->name()->value(),
-            slug: $category->slug()->value() ?? '',
+            slug: $category->slug()->value(),
             parent_id: $category->parentId()?->value(),
-            description: $category->description()->value() ?? '',
+            description: $category->description()->value(),
             is_active: $category->status()->value(),
-            created_at: $category->createdAt() ?? null,
+            created_at: $category->createdAt(),
         );
     }
 }
