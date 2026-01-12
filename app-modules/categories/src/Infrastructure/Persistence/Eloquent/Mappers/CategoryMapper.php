@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Modules\Categories\Infrastructure\Persistence\Eloquent\Mappers;
 
 use Modules\Categories\Domain\Entities\Category;
+use Modules\Categories\Domain\ValueObjects\CategoryCreatedAt;
 use Modules\Categories\Domain\ValueObjects\CategoryDescription;
 use Modules\Categories\Domain\ValueObjects\CategoryId;
 use Modules\Categories\Domain\ValueObjects\CategoryIsActive;
 use Modules\Categories\Domain\ValueObjects\CategoryName;
 use Modules\Categories\Domain\ValueObjects\CategoryParentId;
 use Modules\Categories\Domain\ValueObjects\CategorySlug;
-use Modules\Categories\Infrastructure\Persistence\Eloquents\Models\CategoryModel;
+use Modules\Categories\Infrastructure\Persistence\Eloquent\Models\CategoryModel;
 
 final class CategoryMapper
 {
@@ -24,6 +25,7 @@ final class CategoryMapper
             parentId: new CategoryParentId((int) $model->parentId),
             description: new CategoryDescription((string) $model->description),
             isActive: new CategoryIsActive((bool) $model->isActive),
+            createdAt: $model->createdAt ? new CategoryCreatedAt($model->createdAt) : null,
         );
     }
 
@@ -36,6 +38,7 @@ final class CategoryMapper
         $model->parentId = $category->parentId()->value();
         $model->description = $category->description()->value();
         $model->isActive = $category->status()->value();
+        $model->createdAt = $category->createdAt()?->value();
 
         return $model;
     }

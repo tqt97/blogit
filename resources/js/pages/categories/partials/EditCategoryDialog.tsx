@@ -1,8 +1,7 @@
 import FormDialog from '@/components/dialogs/FormDialog';
 import { CategoryFormData, EditCategoryDialogProps } from '@/types/category';
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
 import CategoryForm from './CategoryForm';
 
 export default function EditCategoryDialog({
@@ -17,8 +16,6 @@ export default function EditCategoryDialog({
         parent_id: null,
     });
     const { setData, put, processing, reset } = form;
-    const { flash } = usePage<{ flash: { message?: string; error: string } }>()
-        .props;
 
     useEffect(() => {
         if (category) {
@@ -38,11 +35,9 @@ export default function EditCategoryDialog({
 
         put(`/category/${category.id}`, {
             onSuccess: () => {
-                toast.success(flash.message);
                 onOpenChange(false);
             },
             onError: (err) => {
-                toast.error(flash.message);
                 console.error('Validation errors:', err);
             },
         });

@@ -9,7 +9,7 @@ export default function TablePagination({
     from,
 }: Pagination) {
     return (
-        <div className="item-center dark:bg-gray-808 flex flex-col justify-between gap-4 border-t bg-white px-8 pt-5 sm:flex-row">
+        <div className="flex items-center dark:bg-gray-900 flex flex-col justify-between gap-4 border-gray-200 bg-white px-3 py-3 sm:flex-row">
             <div className="item-center flex justify-between">
                 <span className="text-sm text-muted-foreground">
                     Showing {from} to {to} of {total} entries
@@ -22,7 +22,9 @@ export default function TablePagination({
                             <Button
                                 variant={'outline'}
                                 className={
-                                    link.active ? 'bg-gray-400 text-white' : ''
+                                    link.active
+                                        ? 'bg-gray-400 text-white dark:bg-gray-700 dark:text-gray-200 dark:border-gray-700'
+                                        : ''
                                 }
                                 size={'sm'}
                                 disabled={link.active}

@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\Categories\Infrastructure\Persistence\Eloquents\Models;
+namespace Modules\Categories\Infrastructure\Persistence\Eloquent\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Category\Domain\Enums\CategoryStatus;
+use Modules\Categories\Domain\Enums\CategoryStatus;
 
 class CategoryModel extends Model
 {

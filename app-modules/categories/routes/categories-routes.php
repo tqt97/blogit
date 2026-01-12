@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Categories\Http\Controllers\CategoryController;
+use Modules\Categories\Presentation\Http\Controllers\CategoryController;
 
 Route::middleware(['web', 'auth', 'verified'])->group(function () {
     Route::prefix('categories')->group(function () {

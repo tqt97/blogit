@@ -1,11 +1,21 @@
 <?php
 
-namespace Modules\Category\Domain\Enums;
+namespace Modules\Categories\Domain\Enums;
 
-enum CategoryStatus: string
+enum CategoryStatus: int
 {
-    case ACTIVE = true;
-    case INACTIVE = false;
+    case ACTIVE = 1;
+    case INACTIVE = 0;
+
+    public static function fromBool(bool $value): self
+    {
+        return $value ? self::ACTIVE : self::INACTIVE;
+    }
+
+    public function value(): bool
+    {
+        return $this === self::ACTIVE;
+    }
 
     public function label(): string
     {

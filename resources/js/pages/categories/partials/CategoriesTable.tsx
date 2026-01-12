@@ -9,11 +9,10 @@ import {
 } from '@/components/ui/table';
 import { confirm } from '@/lib/dialog';
 import { SingleCategory } from '@/types/category';
-import { router, usePage } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useState, type ReactElement } from 'react';
-import { toast } from 'sonner';
 
 interface CategoriesTableProps {
     categories: SingleCategory[];
@@ -25,8 +24,6 @@ export default function CategoriesTable({
     onEdit,
 }: CategoriesTableProps) {
     const [expanded, setExpanded] = useState<Set<number>>(new Set());
-    const { flash } = usePage<{ flash: { message?: string; error: string } }>()
-        .props;
 
     const toggleExpand = (id: number) => {
         setExpanded((prev) => {
@@ -52,7 +49,7 @@ export default function CategoriesTable({
 
         if (ok) {
             router.delete(`/category/${id}`, {
-                onSuccess: () => toast.success(flash.message),
+                onSuccess: () => { },
                 onError: () => console.error('Delete failed'),
             });
         }
@@ -90,10 +87,13 @@ export default function CategoriesTable({
                             <span>{cat.name}</span>
                         </div>
                     </TableCell>
-
+                    <TableCell className=''>
+                        {cat.slug}
+                    </TableCell>
                     <TableCell className="w-[350px] break-words">
                         {cat.description}
                     </TableCell>
+
                     <TableCell>
                         {format(cat.created_at, 'dd-MM-yyyy')}
                     </TableCell>
@@ -130,6 +130,7 @@ export default function CategoriesTable({
                 <TableRow>
                     {/* <TableHead>Id</TableHead> */}
                     <TableHead>Name</TableHead>
+                    <TableHead>Slug</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Created At</TableHead>
                     <TableHead>Actions</TableHead>

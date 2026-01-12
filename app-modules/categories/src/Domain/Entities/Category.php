@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Categories\Domain\Entities;
 
 use LogicException;
+use Modules\Categories\Domain\ValueObjects\CategoryCreatedAt;
 use Modules\Categories\Domain\ValueObjects\CategoryDescription;
 use Modules\Categories\Domain\ValueObjects\CategoryId;
 use Modules\Categories\Domain\ValueObjects\CategoryIsActive;
@@ -21,11 +22,12 @@ final class Category
         private CategoryDescription $description,
         private ?CategoryParentId $parentId,
         private CategoryIsActive $isActive,
+        private ?CategoryCreatedAt $createdAt,
     ) {}
 
-    public static function create(CategoryName $name, CategorySlug $slug, CategoryDescription $description, CategoryParentId $parentId, CategoryIsActive $isActive): self
+    public static function create(CategoryName $name, CategorySlug $slug, CategoryDescription $description, CategoryParentId $parentId, CategoryIsActive $isActive, ?CategoryCreatedAt $createdAt): self
     {
-        return new self(null, $name, $slug, $description, $parentId, $isActive);
+        return new self(null, $name, $slug, $description, $parentId, $isActive, $createdAt);
     }
 
     public function id(): ?CategoryId
@@ -73,6 +75,11 @@ final class Category
     public function parentId(): ?CategoryParentId
     {
         return $this->parentId;
+    }
+
+    public function createdAt(): ?CategoryCreatedAt
+    {
+        return $this->createdAt;
     }
 
     /**
