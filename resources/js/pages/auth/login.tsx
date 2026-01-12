@@ -89,7 +89,7 @@ export default function Login({
 
                             <Button
                                 type="submit"
-                                className="mt-4 w-full"
+                                className="mt-4 w-full hover:cursor-pointer"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"

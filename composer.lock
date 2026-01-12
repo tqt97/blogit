@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b53c796c85cf6d72742f5bb23c4a38c8",
+    "content-hash": "7f15b07531e4795e2c32810fa62867a0",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3243,27 +3243,27 @@
             "time": "2025-09-14T11:18:39+00:00"
         },
         {
-            "name": "modules/roles",
+            "name": "modules/tag",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/roles",
-                "reference": "303fb1a630ef7ff81495023c46196774da77f2cf"
+                "url": "app-modules/tag",
+                "reference": "05c90efe6de0cf513a1bd59ed231866d209a3d49"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Modules\\Roles\\Providers\\RolesServiceProvider"
+                        "Modules\\Tag\\Infrastructure\\Providers\\TagServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Modules\\Roles\\": "src/",
-                    "Modules\\Roles\\Tests\\": "tests/",
-                    "Modules\\Roles\\Database\\Factories\\": "database/factories/",
-                    "Modules\\Roles\\Database\\Seeders\\": "database/seeders/"
+                    "Modules\\Tag\\": "src/",
+                    "Modules\\Tag\\Tests\\": "tests/",
+                    "Modules\\Tag\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Tag\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
