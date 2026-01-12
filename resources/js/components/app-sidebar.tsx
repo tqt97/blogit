@@ -24,7 +24,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Tags',
-        href: '/tags',
+        href: '/admin/tags',
         icon: Tag,
     },
 ];

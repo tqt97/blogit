@@ -10,8 +10,8 @@ type Props = {
 
 export default function Edit({ tag }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Tags', href: '/tags' },
-        { title: `Edit #${tag.id}`, href: `/tags/${tag.id}/edit` },
+        { title: 'Tags', href: '/admin/tags' },
+        { title: `Edit #${tag.id}`, href: `/admin/tags/${tag.id}/edit` },
     ];
 
     return (

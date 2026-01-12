@@ -6,8 +6,8 @@ import { Head } from '@inertiajs/react';
 
 export default function Create() {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Tags', href: '/tags' },
-        { title: 'Create', href: '/tags/create' },
+        { title: 'Tags', href: '/admin/tags' },
+        { title: 'Create', href: '/admin/tags/create' },
     ];
 
     return (
