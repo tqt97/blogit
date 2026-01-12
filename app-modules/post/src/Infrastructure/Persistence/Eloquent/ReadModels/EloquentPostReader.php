@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Post\Infrastructure\Persistence\Eloquent\ReadModels;
 
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -148,7 +149,7 @@ final class EloquentPostReader implements PostReadModel
         if (is_string($date) && ! empty($date)) {
             try {
                 return Carbon::parse($date)->toISOString();
-            } catch (\Exception) {
+            } catch (Exception) {
                 return $date;
             }
         }
