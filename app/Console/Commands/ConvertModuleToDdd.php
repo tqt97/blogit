@@ -68,8 +68,6 @@ final readonly class {$name}DTO
 {
     public function __construct(
         public int \$id,
-        public string \$created_at,
-        public string \$updated_at,
     ) {}
 }
 PHP
@@ -419,50 +417,6 @@ PHP
 
     protected function createCommonValueObjects($path, $name)
     {
-        // CreatedAt
-        $this->createFileIfNotExists(
-            "{$path}/src/Domain/ValueObjects/{$name}CreatedAt.php",
-            <<<PHP
-<?php
-
-declare(strict_types=1);
-
-namespace Modules\\{$name}\\Domain\\ValueObjects;
-
-final class {$name}CreatedAt
-{
-    public function __construct(private readonly string \$value) {}
-
-    public function value(): string
-    {
-        return \$this->value;
-    }
-}
-PHP
-        );
-
-        // UpdatedAt
-        $this->createFileIfNotExists(
-            "{$path}/src/Domain/ValueObjects/{$name}UpdatedAt.php",
-            <<<PHP
-<?php
-
-declare(strict_types=1);
-
-namespace Modules\\{$name}\\Domain\\ValueObjects;
-
-final class {$name}UpdatedAt
-{
-    public function __construct(private readonly string \$value) {}
-
-    public function value(): string
-    {
-        return \$this->value;
-    }
-}
-PHP
-        );
-
         // Intent Enum
         $this->createFileIfNotExists(
             "{$path}/src/Domain/ValueObjects/Intent.php",
@@ -905,7 +859,7 @@ PHP;
 
             // Append if not present
             if (! in_array($providerClass, $json['extra']['laravel']['providers'])) {
-                $json['extra']['laravel']['providers'][] = $providerClass;
+                $json['extra']['laravel']['providers'] = $providerClass;
             }
 
             File::put($composerPath, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
