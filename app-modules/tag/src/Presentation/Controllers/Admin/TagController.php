@@ -93,9 +93,9 @@ final class TagController
         Gate::authorize('update', Tag::class);
 
         try {
-            $rs = $handler->handle($mapper($id, $request->validated()));
+            $handler->handle($mapper($id, $request->validated()));
 
-            return back()->with($this->flash($rs->id->value().'Tag updated.'));
+            return back()->with($this->flash('Tag updated.'));
         } catch (TagNotFoundException) {
             abort(404);
         } catch (SlugAlreadyExistsException) {
