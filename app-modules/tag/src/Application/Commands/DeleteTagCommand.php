@@ -6,5 +6,5 @@ namespace Modules\Tag\Application\Commands;
 
 final readonly class DeleteTagCommand
 {
-    public function __construct(public readonly int $id) {}
+    public function __construct(public int $id) {}
 }

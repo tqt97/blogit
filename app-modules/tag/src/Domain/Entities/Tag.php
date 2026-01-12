@@ -26,11 +26,8 @@ final class Tag
         return new self(null, $name, $slug);
     }
 
-    public static function reconstitute(
-        TagId $id,
-        TagName $name,
-        TagSlug $slug,
-    ): self {
+    public static function reconstitute(TagId $id, TagName $name, TagSlug $slug): self
+    {
         return new self($id, $name, $slug);
     }
 
@@ -51,11 +48,7 @@ final class Tag
 
     public function withId(TagId $id): self
     {
-        $tag = new self(
-            $id,
-            $this->name,
-            $this->slug,
-        );
+        $tag = new self($id, $this->name, $this->slug);
 
         foreach ($this->events as $event) {
             $tag->record($event);

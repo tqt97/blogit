@@ -10,9 +10,5 @@ use Modules\Tag\Domain\ValueObjects\TagSlug;
 
 final readonly class TagUpdated
 {
-    public function __construct(
-        public TagId $id,
-        public TagName $name,
-        public TagSlug $slug,
-    ) {}
+    public function __construct(public TagId $id, public TagName $name, public TagSlug $slug) {}
 }

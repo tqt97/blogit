@@ -6,5 +6,5 @@ namespace Modules\Tag\Application\Queries;
 
 final readonly class ShowTagQuery
 {
-    public function __construct(public readonly int $id) {}
+    public function __construct(public int $id) {}
 }

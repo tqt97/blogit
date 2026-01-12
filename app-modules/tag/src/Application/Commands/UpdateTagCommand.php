@@ -7,8 +7,8 @@ namespace Modules\Tag\Application\Commands;
 final readonly class UpdateTagCommand
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $name,
-        public readonly string $slug,
+        public int $id,
+        public string $name,
+        public string $slug,
     ) {}
 }
