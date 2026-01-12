@@ -1,9 +1,5 @@
 # 🏗️ Tag Module: Technical Architecture & Implementation Guide
 
-> **Role:** Technical Lead / Senior Architect  
-> **Context:** Laravel Modular Monolith (Strict DDD)  
-> **Module:** `@app-modules/tag`
-
 ---
 
 ## 1. Executive Summary

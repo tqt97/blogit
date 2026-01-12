@@ -1,4 +1,4 @@
-# Notes
+# Function `reconstitute()`
 
 ---
 

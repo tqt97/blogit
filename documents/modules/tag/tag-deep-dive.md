@@ -1,7 +1,5 @@
 # 🏷️ Tag Module: The Ultimate Architectural Deep Dive
 
-This document serves as the definitive guide to the `Tag` module. It explores the intricate class relationships, dependency management, data lifecycles, and the underlying "Why" behind this DDD (Domain-Driven Design) implementation.
-
 ---
 
 ## 🏛️ 1. The Core Philosophy: "Domain is King"

@@ -1,7 +1,5 @@
 # 🧠 Domain-Driven Design: Event Handling Deep Dive
 
-> **Context:** This document summarizes the architectural decisions regarding Domain Events, the Event Bus, and the internal mechanics of the `Tag` entity within the `app-modules/tag` module.
-
 ---
 
 ## 1. The Big Picture: Why use an Event Bus? 🚌

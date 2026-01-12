@@ -1,8 +1,5 @@
 # DDD Module Generation Guide (Tag Module Example)
 
-> **Context:** This guide explains how to generate a DDD-compliant module in Laravel, using `@app-modules/tag` as the reference implementation.
-> **Target Audience:** Developers and AI Agents creating new modules.
-
 ---
 
 ## 1. Directory Structure
