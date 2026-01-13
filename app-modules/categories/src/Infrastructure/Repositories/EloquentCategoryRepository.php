@@ -28,11 +28,7 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
 
             $this->mapper->toPersistence($category, $model)->save();
 
-            if ($category->id()) {
-                return $category;
-            }
-
-            return $category->withId(new CategoryId((int) $model->id));
+            return $this->mapper->toDomain($model);
         } catch (QueryException $e) {
             if ($this->isUniqueConstraintViolation($e)) {
                 throw new SlugAlreadyExistsException($e);

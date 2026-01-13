@@ -8,7 +8,7 @@ final readonly class CreateCategoryCommand
 {
     public function __construct(
         public string $name,
-        public string $slug,
+        public ?string $slug = null,
         public ?int $parent_id = null,
         public ?string $description = null,
         public bool $is_active = true,

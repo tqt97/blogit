@@ -20,6 +20,11 @@ final class CategoryIsActive
         return new self(false);
     }
 
+    public static function from(bool $value): self
+    {
+        return new self($value);
+    }
+
     public function value(): bool
     {
         return $this->value;

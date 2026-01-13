@@ -22,27 +22,33 @@ final class CategoryEntity
     public function __construct(
         private ?CategoryId $id,
         private CategoryName $name,
-        private CategorySlug $slug,
-        private CategoryDescription $description,
+        private ?CategorySlug $slug,
+        private ?CategoryDescription $description,
         private ?CategoryParentId $parentId,
         private CategoryIsActive $isActive,
-        private ?CategoryCreatedAt $createdAt,
+        private ?CategoryCreatedAt $createdAt = null,
     ) {}
 
-    public static function create(CategoryName $name, CategorySlug $slug, CategoryDescription $description, CategoryParentId $parentId, CategoryIsActive $isActive, ?CategoryCreatedAt $createdAt): self
+    public static function create(CategoryName $name, ?CategorySlug $slug, ?CategoryDescription $description, ?CategoryParentId $parentId, CategoryIsActive $isActive): self
     {
-        return new self(null, $name, $slug, $description, $parentId, $isActive, $createdAt);
+        return new self(null, $name, $slug, $description, $parentId, $isActive, null);
     }
 
-    public static function reconstitute(CategoryId $id, CategoryName $name, CategorySlug $slug, CategoryDescription $description, CategoryParentId $parentId, CategoryIsActive $isActive, ?CategoryCreatedAt $createdAt): self
-    {
+    public static function reconstitute(
+        CategoryId $id,
+        CategoryName $name,
+        CategorySlug $slug,
+        ?CategoryDescription $description,
+        ?CategoryParentId $parentId,
+        CategoryIsActive $isActive,
+        ?CategoryCreatedAt $createdAt
+    ): self {
         return new self($id, $name, $slug, $description, $parentId, $isActive, $createdAt);
     }
 
     public function id(): ?CategoryId
     {
-        return $this->id
-            ?? throw new LogicException('Tag must have an ID');
+        return $this->id;
     }
 
     public function name(): CategoryName
@@ -50,7 +56,7 @@ final class CategoryEntity
         return $this->name;
     }
 
-    public function slug(): CategorySlug
+    public function slug(): ?CategorySlug
     {
         return $this->slug;
     }
@@ -61,7 +67,7 @@ final class CategoryEntity
         $this->slug = $slug;
     }
 
-    public function description(): CategoryDescription
+    public function description(): ?CategoryDescription
     {
         return $this->description;
     }
@@ -93,7 +99,15 @@ final class CategoryEntity
 
     public function withId(CategoryId $id): self
     {
-        $category = new self($id, $this->name, $this->slug, $this->description, $this->parentId, $this->isActive, $this->createdAt);
+        $category = new self(
+            $id,
+            $this->name,
+            $this->slug,
+            $this->description,
+            $this->parentId,
+            $this->isActive,
+            $this->createdAt
+        );
 
         foreach ($this->events as $event) {
             $category->record($event);

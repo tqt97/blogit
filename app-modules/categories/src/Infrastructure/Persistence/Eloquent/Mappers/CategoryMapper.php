@@ -18,13 +18,13 @@ final class CategoryMapper
 {
     public function toDomain(CategoryModel $model): CategoryEntity
     {
-        return new CategoryEntity(
+        return CategoryEntity::reconstitute(
             id: new CategoryId((int) $model->id),
             name: new CategoryName((string) $model->name),
             slug: new CategorySlug((string) $model->slug),
-            parentId: new CategoryParentId((int) $model->parentId),
-            description: new CategoryDescription((string) $model->description),
-            isActive: new CategoryIsActive((bool) $model->isActive),
+            description: $model->description ? new CategoryDescription((string) $model->description) : null,
+            parentId: $model->parentId ? new CategoryParentId((int) $model->parentId) : null,
+            isActive: CategoryIsActive::from((bool) $model->isActive),
             createdAt: $model->createdAt ? new CategoryCreatedAt($model->createdAt) : null,
         );
     }
@@ -34,11 +34,11 @@ final class CategoryMapper
         $model ??= new CategoryModel;
 
         $model->name = $category->name()->value();
-        $model->slug = $category->slug()->value();
-        $model->parentId = $category->parentId()->value();
-        $model->description = $category->description()->value();
-        $model->isActive = $category->status()->value();
-        $model->createdAt = $category->createdAt()?->value();
+        $model->slug = $category->slug()?->value();
+        $model->parent_id = $category->parentId()?->value();
+        $model->description = $category->description()?->value();
+        $model->is_active = $category->status()->value();
+        // createdAt is managed by Eloquent
 
         return $model;
     }
