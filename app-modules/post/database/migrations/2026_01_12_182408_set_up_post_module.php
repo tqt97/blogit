@@ -7,6 +7,25 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        DB::table('categories')->insert([
+            [
+                'name' => 'Category A',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Category B',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
@@ -41,6 +60,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('categories');
         Schema::dropIfExists('post_tag');
         Schema::dropIfExists('posts');
     }

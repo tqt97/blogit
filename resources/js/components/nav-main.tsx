@@ -1,6 +1,6 @@
 import {
     SidebarGroup,
-    SidebarGroupLabel,
+    // SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -13,7 +13,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
     return (
         <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+            {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
             <SidebarMenu>
                 {items.map((item) => (
                     <SidebarMenuItem key={item.title}>

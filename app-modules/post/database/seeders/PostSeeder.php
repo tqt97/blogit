@@ -3,6 +3,7 @@
 namespace Modules\Post\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Modules\Post\Infrastructure\Persistence\Eloquent\Models\PostModel;
 
 class PostSeeder extends Seeder
 {
@@ -11,6 +12,6 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        // Add code here
+        PostModel::factory()->count(100)->create();
     }
 }

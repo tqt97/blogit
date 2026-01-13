@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Modules\Post\Infrastructure\Persistence\Eloquent\Models;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Post\Database\Factories\PostModelFactory;
 use Modules\Post\Domain\ValueObjects\PostStatus;
 
 final class PostModel extends Model
 {
+    /** @use HasFactory<\Database\Factories\PostFactory> */
+    use HasFactory;
+
     use SoftDeletes;
 
     protected $table = 'posts';
@@ -82,5 +87,10 @@ final class PostModel extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    protected static function newFactory()
+    {
+        return PostModelFactory::new();
     }
 }

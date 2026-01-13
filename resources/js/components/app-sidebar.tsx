@@ -13,19 +13,47 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Tag } from 'lucide-react';
+import { BookOpen, Boxes, FileText, Folder, LayoutGrid, MessageSquareCodeIcon, Newspaper, Tag } from 'lucide-react';
 import AppLogo from './app-logo';
+import { NavCollapse } from './nav-collapse';
 
-const mainNavItems: NavItem[] = [
+const singleNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+        isActive: false,
     },
+];
+
+const blogNavItems: NavItem[] = [
     {
-        title: 'Tags',
-        href: '/admin/tags',
-        icon: Tag,
+        title: 'Blogs',
+        href: '#',
+        icon: Newspaper,
+        isActive: true,
+        items: [
+            {
+                title: 'Tags',
+                href: '/admin/tags',
+                icon: Tag,
+            },
+            {
+                title: 'Categories',
+                href: '/admin/categories',
+                icon: Boxes,
+            },
+            {
+                title: 'Comments',
+                href: '/admin/comments',
+                icon: MessageSquareCodeIcon,
+            },
+            {
+                title: 'Posts',
+                href: '/admin/posts',
+                icon: FileText,
+            },
+        ],
     },
 ];
 
@@ -58,7 +86,8 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={singleNavItems} />
+                <NavCollapse items={blogNavItems} />
             </SidebarContent>
 
             <SidebarFooter>

@@ -20,6 +20,11 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    items?: {
+        title: string,
+        href: NonNullable<InertiaLinkProps['href']>,
+        icon?: LucideIcon | null;
+    }[]
 }
 
 export interface SharedData {
@@ -50,6 +55,23 @@ export type Tag = {
     updated_at?: string;
 };
 
+export type Post = {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    content: string;
+    status: 'draft' | 'pending' | 'published';
+    viewCount: number;
+    commentCount: number;
+    likeCount: number;
+    publishedAt?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
+    tags?: Tag[];
+    categoryId?: number | null;
+};
+
 export type PaginationLink = {
     url: string | null;
     label: string;
@@ -78,6 +100,14 @@ export type TagIndexFilters = {
     page?: number;
 };
 
+export type PostIndexFilters = {
+    search?: string;
+    per_page?: number;
+    sort?: string;
+    direction?: 'asc' | 'desc';
+    page?: number;
+};
+
 export interface PaginatedResponse<T = unknown | null> {
     current_page: number;
     data: T[];
@@ -95,6 +125,8 @@ export interface PaginatedResponse<T = unknown | null> {
 }
 
 export type TagIndexProps = { tags: Paginated<Tag>; filters: TagIndexFilters };
+
+export type PostIndexProps = { posts: Paginated<Post>; filters: PostIndexFilters };
 
 export type ConfirmDialogProps = {
     open: boolean;
@@ -124,6 +156,19 @@ export type RouteForm = {
 export type FormTagData = {
     name: string;
     slug: string;
+    intent: 'default' | 'create_and_continue';
+};
+
+
+export type FormPostData = {
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    content: string;
+    category_id: number | string | null;
+    tag_ids: number[];
+    status: string;
+    published_at: string | null;
     intent: 'default' | 'create_and_continue';
 };
 

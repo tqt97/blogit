@@ -28,7 +28,6 @@ class PostModelFactory extends Factory
         return [
             'title' => $title = fake()->sentence(),
             'slug' => Str::slug($title),
-            'body' => fake()->paragraphs(2, true),
             'excerpt' => fake()->sentence(),
             'content' => fake()->paragraphs(2, true),
             'user_id' => 1,
