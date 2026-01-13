@@ -28,6 +28,3 @@ yarn-error.log
 /.zed
 _ide_helper.php
 .phpstorm.meta.php
-
-.gemini/
-gha-creds-*.json
