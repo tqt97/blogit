@@ -3,19 +3,20 @@
 namespace Modules\Categories\Presentation\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Modules\Categories\Application\CommandHandlers\CreateCategoryHandler;
 use Modules\Categories\Application\Queries\ListCategoriesQuery;
 use Modules\Categories\Application\QueryHandlers\ListCategoriesHandler;
 use Modules\Categories\Domain\Exceptions\SlugAlreadyExistsException;
 use Modules\Categories\Presentation\Http\Requests\CreateCategoryRequest;
 use Modules\Categories\Presentation\Http\Requests\ListCategoriesRequest;
-use Illuminate\Validation\ValidationException;
 use Modules\Categories\Presentation\Mappers\CreateCategoryCommandMapper;
-use Modules\Categories\Application\CommandHandlers\CreateCategoryHandler;
 use Str;
 
-final class CategoryController {
+final class CategoryController
+{
     /**
      * Display a paginated and searchable list of categories.
      */
@@ -54,7 +55,7 @@ final class CategoryController {
             //     return redirect()->route('tags.create')->with($this->flash('Tag created. Continue creating tags.'));
             // }
 
-            return redirect()->route('categories.index')->with($this->flash('Category created.','message'));
+            return redirect()->route('categories.index')->with($this->flash('Category created.', 'message'));
         } catch (SlugAlreadyExistsException) {
             throw ValidationException::withMessages(['slug' => 'Slug already exists.']);
         }

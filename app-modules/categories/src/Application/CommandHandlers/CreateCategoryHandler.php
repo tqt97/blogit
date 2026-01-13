@@ -6,8 +6,8 @@ namespace Modules\Categories\Application\CommandHandlers;
 
 use Modules\Categories\Application\Commands\CreateCategoryCommand;
 use Modules\Categories\Application\Port\EventBus\EventBus;
-use Modules\Categories\Application\Port\Transaction\TransactionManager;
 use Modules\Categories\Application\Port\Responses\CreateCategoryResponse;
+use Modules\Categories\Application\Port\Transaction\TransactionManager;
 use Modules\Categories\Domain\Entities\CategoryEntity;
 use Modules\Categories\Domain\Interfaces\CategoryRepositoryInterface;
 use Modules\Categories\Domain\ValueObjects\CategoryDescription;

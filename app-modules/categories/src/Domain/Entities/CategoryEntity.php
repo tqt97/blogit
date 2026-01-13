@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\Categories\Domain\Entities;
 
-use LogicException;
 use Modules\Categories\Domain\ValueObjects\CategoryCreatedAt;
 use Modules\Categories\Domain\ValueObjects\CategoryDescription;
 use Modules\Categories\Domain\ValueObjects\CategoryId;
