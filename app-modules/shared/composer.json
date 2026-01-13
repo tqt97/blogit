@@ -7,5 +7,6 @@
             "Modules\\Shared\\": "src/"
         }
     },
+    "minimum-stability": "stable",
     "require": {}
 }
