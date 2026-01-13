@@ -77,9 +77,9 @@ export default function CategoryPage() {
                             onEdit={handleEdit}
                         />
                         <TablePagination
-                            total={paginatedCategories.total}
-                            from={paginatedCategories.from}
-                            to={paginatedCategories.to}
+                            // total={paginatedCategories.total}
+                            // from={paginatedCategories.from}
+                            // to={paginatedCategories.to}
                             links={paginatedCategories.links}
                         />
                     </CardContent>

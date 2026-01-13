@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Categories\Application\DTOs;
 
-use Modules\Categories\Domain\Entities\Category;
+use Modules\Categories\Domain\Entities\CategoryEntity;
 
 class CategoryDTO
 {
@@ -19,7 +19,7 @@ class CategoryDTO
         public readonly ?array $children_recursive = null
     ) {}
 
-    public static function fromEntity(Category $category): self
+    public static function fromEntity(CategoryEntity $category): self
     {
         return new self(
             id: $category->id()?->value(),

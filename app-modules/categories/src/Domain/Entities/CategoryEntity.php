@@ -12,9 +12,13 @@ use Modules\Categories\Domain\ValueObjects\CategoryIsActive;
 use Modules\Categories\Domain\ValueObjects\CategoryName;
 use Modules\Categories\Domain\ValueObjects\CategoryParentId;
 use Modules\Categories\Domain\ValueObjects\CategorySlug;
+use Modules\Category\Domain\Events\CategoryCreated;
 
-final class Category
+final class CategoryEntity
 {
+    /** @var list<object> */
+    private array $events = [];
+
     public function __construct(
         private ?CategoryId $id,
         private CategoryName $name,
@@ -28,6 +32,11 @@ final class Category
     public static function create(CategoryName $name, CategorySlug $slug, CategoryDescription $description, CategoryParentId $parentId, CategoryIsActive $isActive, ?CategoryCreatedAt $createdAt): self
     {
         return new self(null, $name, $slug, $description, $parentId, $isActive, $createdAt);
+    }
+
+    public static function reconstitute(CategoryId $id, CategoryName $name, CategorySlug $slug, CategoryDescription $description, CategoryParentId $parentId, CategoryIsActive $isActive, ?CategoryCreatedAt $createdAt): self
+    {
+        return new self($id, $name, $slug, $description, $parentId, $isActive, $createdAt);
     }
 
     public function id(): ?CategoryId
@@ -82,15 +91,39 @@ final class Category
         return $this->createdAt;
     }
 
-    /**
-     * Mapping function to set the ID after creation
-     */
-    public function setId(CategoryId $id): void
+    public function withId(CategoryId $id): self
     {
-        if ($this->id !== null) {
-            throw new LogicException('Category ID is already set.');
+        $category = new self($id, $this->name, $this->slug, $this->description, $this->parentId, $this->isActive, $this->createdAt);
+
+        foreach ($this->events as $event) {
+            $category->record($event);
         }
 
-        $this->id = $id;
+        if ($this->id === null) {
+            $category->record(new CategoryCreated($id, $this->name, $this->slug, $this->description, $this->parentId, $this->isActive));
+        }
+
+        return $category;
+    }
+
+    /**
+     * Pulls all recorded domain events from this entity.
+     *
+     * Once pulled, the events are removed from the entity.
+     */
+    public function pullEvents(): array
+    {
+        $events = $this->events;
+        $this->events = [];
+
+        return $events;
+    }
+
+    /**
+     * Records a domain event for later publishing.
+     */
+    private function record(object $event): void
+    {
+        $this->events[] = $event;
     }
 }

@@ -5,8 +5,8 @@ export interface Links {
 }
 
 export interface Pagination {
-    from: number | null;
     links: Links[];
-    to: number | null;
-    total: number;
+    // from: number | null;
+    // to: number | null;
+    // total: number;
 }

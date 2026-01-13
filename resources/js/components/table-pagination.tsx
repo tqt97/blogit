@@ -4,17 +4,17 @@ import { Button } from './ui/button';
 
 export default function TablePagination({
     links,
-    total,
-    to,
-    from,
+    // total,
+    // to,
+    // from,
 }: Pagination) {
     return (
-        <div className="flex items-center dark:bg-gray-900 flex flex-col justify-between gap-4 border-gray-200 bg-white px-3 py-3 sm:flex-row">
-            <div className="item-center flex justify-between">
+        <div className="flex items-center dark:bg-gray-900 flex flex-col justify-center gap-4 border-gray-200 bg-white px-3 py-3 sm:flex-row">
+            {/* <div className="item-center flex justify-between">
                 <span className="text-sm text-muted-foreground">
                     Showing {from} to {to} of {total} entries
                 </span>
-            </div>
+            </div> */}
             <div className="flex items-center space-x-2">
                 {links.map((link, index) =>
                     link.url != null ? (

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Categories\Infrastructure\Persistence\Eloquent\Mappers;
 
-use Modules\Categories\Domain\Entities\Category;
+use Modules\Categories\Domain\Entities\CategoryEntity;
 use Modules\Categories\Domain\ValueObjects\CategoryCreatedAt;
 use Modules\Categories\Domain\ValueObjects\CategoryDescription;
 use Modules\Categories\Domain\ValueObjects\CategoryId;
@@ -16,9 +16,9 @@ use Modules\Categories\Infrastructure\Persistence\Eloquent\Models\CategoryModel;
 
 final class CategoryMapper
 {
-    public function toDomain(CategoryModel $model): Category
+    public function toDomain(CategoryModel $model): CategoryEntity
     {
-        return new Category(
+        return new CategoryEntity(
             id: new CategoryId((int) $model->id),
             name: new CategoryName((string) $model->name),
             slug: new CategorySlug((string) $model->slug),
@@ -29,7 +29,7 @@ final class CategoryMapper
         );
     }
 
-    public function toPersistence(Category $category, ?CategoryModel $model = null): CategoryModel
+    public function toPersistence(CategoryEntity $category, ?CategoryModel $model = null): CategoryModel
     {
         $model ??= new CategoryModel;
 

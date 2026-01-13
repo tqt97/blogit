@@ -143,9 +143,9 @@ export default function Roles({ roles }: { roles: Role }) {
 					</CardContent>
 					{roles.data.length > 0 ? (
 						<TablePagination
-							total={roles.total}
-							from={roles.from}
-							to={roles.to}
+							// total={roles.total}
+							// from={roles.from}
+							// to={roles.to}
 							links={roles.links}
 						/>
 					) : (

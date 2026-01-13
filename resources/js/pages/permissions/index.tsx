@@ -212,9 +212,9 @@ export default function Permissions({
                     </CardContent>
                     {permissions.data.length > 0 ? (
                         <TablePagination
-                            total={permissions.total}
-                            from={permissions.from}
-                            to={permissions.to}
+                            // total={permissions.total}
+                            // from={permissions.from}
+                            // to={permissions.to}
                             links={permissions.links}
                         />
                     ) : (

@@ -3,6 +3,7 @@
 namespace Modules\Categories\Presentation\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\Categories\Application\Queries\ListCategoriesQuery;
 
 class ListCategoriesRequest extends FormRequest
 {
@@ -27,5 +28,15 @@ class ListCategoriesRequest extends FormRequest
             'sort' => 'nullable|string|in:id,name,slug,created_at',
             'direction' => 'nullable|string|in:asc,desc',
         ];
+    }
+
+    public function toQuery(): ListCategoriesQuery
+    {
+        return new ListCategoriesQuery(
+            search: $this->input('search'),
+            perPage: $this->integer('perPage', 5),
+            sort: $this->input('sort', 'id'),
+            direction: $this->input('direction', 'desc'),
+        );
     }
 }
