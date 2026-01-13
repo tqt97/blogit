@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e221fe3b90a1f85fbfcbf5312874448",
+    "content-hash": "948462174675b80e06694f790e5228cf",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3382,53 +3382,23 @@
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/post",
-                "reference": "c80fe06c6786e3e028252e878b576a06894011c3"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": "Modules\\Post\\Infrastructure\\Providers\\PostServiceProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Modules\\Post\\": "src/",
-                    "Modules\\Post\\Tests\\": "tests/",
-                    "Modules\\Post\\Database\\Factories\\": "database/factories/",
-                    "Modules\\Post\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "modules/tag",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/tag",
-                "reference": "05c90efe6de0cf513a1bd59ed231866d209a3d49"
+                "url": "app-modules/roles",
+                "reference": "303fb1a630ef7ff81495023c46196774da77f2cf"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Modules\\Tag\\Infrastructure\\Providers\\TagServiceProvider"
+                        "Modules\\Roles\\Providers\\RolesServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Modules\\Tag\\": "src/",
-                    "Modules\\Tag\\Tests\\": "tests/",
-                    "Modules\\Tag\\Database\\Factories\\": "database/factories/",
-                    "Modules\\Tag\\Database\\Seeders\\": "database/seeders/"
+                    "Modules\\Roles\\": "src/",
+                    "Modules\\Roles\\Tests\\": "tests/",
+                    "Modules\\Roles\\Database\\Factories\\": "database/factories/",
+                    "Modules\\Roles\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

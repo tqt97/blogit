@@ -13,11 +13,10 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
-    LayoutGrid,
-    Tag,
     BoxesIcon,
     ContainerIcon,
     Key,
+    LayoutGrid,
     LockKeyholeIcon,
     Users2Icon,
 } from 'lucide-react';
@@ -59,12 +58,6 @@ const mainNavItems: NavItem[] = [
         href: '/products',
         icon: BoxesIcon,
         permission: 'view_products',
-    },
-    {
-        title: 'Tags',
-        href: '/admin/tags',
-        icon: Tag,
-        permission: ''
     },
 ];
 

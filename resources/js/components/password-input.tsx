@@ -57,7 +57,7 @@ export function PasswordInput({
                 className={[
                     'absolute top-1/2 right-[1px] -translate-y-1/2 rounded-md p-2',
                     'text-muted-foreground hover:text-foreground',
-                    'hover:cursor-pointer hover:bg-gray-900 hover:text-gray-50 focus:ring-2 focus:ring-ring focus:outline-none',
+                    'hover:bg-accent focus:ring-2 focus:ring-ring focus:outline-none',
                     buttonClassName,
                 ]
                     .filter(Boolean) // remove undefined|null|false => avoid "undefined" class
