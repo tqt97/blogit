@@ -32,11 +32,7 @@ final class EloquentPostRepository implements PostRepository
 
             $this->mapper->toPersistence($post, $model)->save();
 
-            if ($post->id()) {
-                return $post;
-            }
-
-            return $post->withId(new PostId((int) $model->id));
+            return $post->id() ? $post : $post->withId(new PostId((int) $model->id));
         } catch (QueryException $e) {
             if ($this->isUniqueConstraintViolation($e)) {
                 throw new SlugAlreadyExistsException($e);
@@ -82,6 +78,56 @@ final class EloquentPostRepository implements PostRepository
 
         try {
             PostModel::query()->whereIn('id', $idValues)->delete();
+        } catch (QueryException $e) {
+            if ($this->isForeignKeyConstraintViolation($e)) {
+                throw new PostInUseException($e);
+            }
+            throw $e;
+        }
+    }
+
+    public function restoreMany(PostIds $ids): void
+    {
+        $idValues = $ids->toScalars();
+
+        PostModel::withTrashed()->whereIn('id', $idValues)->restore();
+    }
+
+    public function forceDeleteMany(PostIds $ids): void
+    {
+        $idValues = $ids->toScalars();
+
+        try {
+            PostModel::withTrashed()->whereIn('id', $idValues)->forceDelete();
+        } catch (QueryException $e) {
+            if ($this->isForeignKeyConstraintViolation($e)) {
+                throw new PostInUseException($e);
+            }
+            throw $e;
+        }
+    }
+
+    public function restore(PostId $id): void
+    {
+        try {
+            $count = PostModel::withTrashed()->whereKey($id->value())->restore();
+
+            if ($count === 0) {
+                throw new PostNotFoundException;
+            }
+        } catch (ModelNotFoundException) {
+            throw new PostNotFoundException;
+        }
+    }
+
+    public function forceDelete(PostId $id): void
+    {
+        try {
+            $count = PostModel::withTrashed()->whereKey($id->value())->forceDelete();
+
+            if ($count === 0) {
+                throw new PostNotFoundException;
+            }
         } catch (QueryException $e) {
             if ($this->isForeignKeyConstraintViolation($e)) {
                 throw new PostInUseException($e);

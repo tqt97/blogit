@@ -41,10 +41,10 @@ final class UpdatePostHandler
 
             $post->update(
                 new PostUserId($command->userId),
-                new PostCategoryId($command->categoryId),
+                $command->categoryId ? new PostCategoryId($command->categoryId) : null,
                 new PostTitle($command->title),
                 new PostSlug($command->slug),
-                new PostExcerpt($command->excerpt),
+                $command->excerpt ? new PostExcerpt($command->excerpt) : null,
                 new PostContent($command->content),
                 PostStatus::fromString($command->status),
                 new PostPublishedAt($command->publishedAt),
@@ -52,7 +52,7 @@ final class UpdatePostHandler
 
             $post = $this->repository->save($post);
 
-            if (! empty($command->tagIds)) {
+            if ($command->tagIds !== null) {
                 $tagsChanged = $this->repository->syncTags($post->id(), new PostTagIds($command->tagIds));
                 if ($tagsChanged) {
                     $this->eventBus->publish([
@@ -63,7 +63,7 @@ final class UpdatePostHandler
 
             $this->eventBus->publish($post->pullEvents());
 
-            return new UpdatePostResult(new PostId($post->id()->value()));
+            return new UpdatePostResult($post->id()->value());
         });
     }
 }

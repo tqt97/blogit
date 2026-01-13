@@ -9,12 +9,12 @@ use Modules\Post\Application\Ports\EventBus\EventBus;
 use Modules\Post\Application\Ports\Transaction\TransactionManager;
 use Modules\Post\Application\Results\CreatePostResult;
 use Modules\Post\Domain\Entities\Post;
+use Modules\Post\Domain\Events\PostTagsSynchronized;
 use Modules\Post\Domain\Repositories\PostRepository;
 use Modules\Post\Domain\ValueObjects\PostCategoryId;
 use Modules\Post\Domain\ValueObjects\PostCommentCount;
 use Modules\Post\Domain\ValueObjects\PostContent;
 use Modules\Post\Domain\ValueObjects\PostExcerpt;
-use Modules\Post\Domain\ValueObjects\PostId;
 use Modules\Post\Domain\ValueObjects\PostLikeCount;
 use Modules\Post\Domain\ValueObjects\PostPublishedAt;
 use Modules\Post\Domain\ValueObjects\PostSlug;
@@ -37,10 +37,10 @@ final class CreatePostHandler
         return $this->transactionManager->withinTransaction(function () use ($command) {
             $data = Post::create(
                 new PostUserId($command->userId),
-                new PostCategoryId($command->categoryId),
+                $command->categoryId ? new PostCategoryId($command->categoryId) : null,
                 new PostTitle($command->title),
                 new PostSlug($command->slug),
-                new PostExcerpt($command->excerpt),
+                $command->excerpt ? new PostExcerpt($command->excerpt) : null,
                 new PostContent($command->content),
                 PostStatus::fromString($command->status),
                 new PostViewCount($command->viewCount),
@@ -53,11 +53,14 @@ final class CreatePostHandler
 
             if (! empty($command->tagIds)) {
                 $this->repository->syncTags($post->id(), new PostTagIds($command->tagIds));
+                $this->eventBus->publish([
+                    new PostTagsSynchronized($post->id()->value(), $command->tagIds),
+                ]);
             }
 
             $this->eventBus->publish($post->pullEvents());
 
-            return new CreatePostResult(new PostId($post->id()->value()));
+            return new CreatePostResult($post->id()->value());
         });
     }
 }

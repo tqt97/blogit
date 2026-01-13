@@ -11,11 +11,19 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use Modules\Post\Application\CommandHandlers\BulkDeletePostsHandler;
+use Modules\Post\Application\CommandHandlers\BulkForceDeletePostsHandler;
+use Modules\Post\Application\CommandHandlers\BulkRestorePostsHandler;
 use Modules\Post\Application\CommandHandlers\CreatePostHandler;
 use Modules\Post\Application\CommandHandlers\DeletePostHandler;
+use Modules\Post\Application\CommandHandlers\ForceDeletePostHandler;
+use Modules\Post\Application\CommandHandlers\RestorePostHandler;
 use Modules\Post\Application\CommandHandlers\UpdatePostHandler;
 use Modules\Post\Application\Commands\BulkDeletePostsCommand;
+use Modules\Post\Application\Commands\BulkForceDeletePostsCommand;
+use Modules\Post\Application\Commands\BulkRestorePostsCommand;
 use Modules\Post\Application\Commands\DeletePostCommand;
+use Modules\Post\Application\Commands\ForceDeletePostCommand;
+use Modules\Post\Application\Commands\RestorePostCommand;
 use Modules\Post\Application\Queries\ShowPostQuery;
 use Modules\Post\Application\QueryHandlers\ListPostsHandler;
 use Modules\Post\Application\QueryHandlers\ShowPostHandler;
@@ -40,9 +48,10 @@ final class PostController
         Gate::authorize('viewAny', Post::class);
 
         $filters = $request->filters();
+        $posts = $handler->handle($mapper($filters));
 
         return Inertia::render('admin/posts/index', [
-            'posts' => $handler->handle($mapper($filters)),
+            'posts' => $posts->appends($filters),
             'filters' => $filters,
         ]);
     }
@@ -118,6 +127,34 @@ final class PostController
         }
     }
 
+    public function restore(int $id, RestorePostHandler $handler): RedirectResponse
+    {
+        Gate::authorize('update', Post::class);
+
+        try {
+            $handler->handle(new RestorePostCommand($id));
+
+            return back()->with($this->flash('Post restored.'));
+        } catch (PostNotFoundException) {
+            abort(404);
+        }
+    }
+
+    public function forceDestroy(int $id, ForceDeletePostHandler $handler): RedirectResponse
+    {
+        Gate::authorize('delete', Post::class);
+
+        try {
+            $handler->handle(new ForceDeletePostCommand($id));
+
+            return back()->with($this->flash('Post permanently deleted.'));
+        } catch (PostNotFoundException) {
+            abort(404);
+        } catch (PostInUseException) {
+            return back()->with($this->flash('Cannot delete post permanently. It may be in use.', 'error'));
+        }
+    }
+
     public function bulkDestroy(BulkDestroyPostRequest $request, BulkDeletePostsHandler $handler): RedirectResponse
     {
         Gate::authorize('delete', Post::class);
@@ -128,6 +165,28 @@ final class PostController
             return back()->with($this->flash('Selected posts deleted.'));
         } catch (PostInUseException) {
             return back()->with($this->flash('One or more posts could not be deleted. They may be in use.', 'error'));
+        }
+    }
+
+    public function bulkRestore(BulkDestroyPostRequest $request, BulkRestorePostsHandler $handler): RedirectResponse
+    {
+        Gate::authorize('update', Post::class);
+
+        $handler->handle(new BulkRestorePostsCommand(new PostIds($request->validated('ids'))));
+
+        return back()->with($this->flash('Selected posts restored.'));
+    }
+
+    public function bulkForceDestroy(BulkDestroyPostRequest $request, BulkForceDeletePostsHandler $handler): RedirectResponse
+    {
+        Gate::authorize('delete', Post::class);
+
+        try {
+            $handler->handle(new BulkForceDeletePostsCommand(new PostIds($request->validated('ids'))));
+
+            return back()->with($this->flash('Selected posts permanently deleted.'));
+        } catch (PostInUseException) {
+            return back()->with($this->flash('One or more posts could not be deleted permanently. They may be in use.', 'error'));
         }
     }
 

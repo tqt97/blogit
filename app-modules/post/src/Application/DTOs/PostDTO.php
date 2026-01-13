@@ -13,15 +13,15 @@ final readonly class PostDTO
         public int $id,
         public string $title,
         public string $slug,
-        public string $excerpt,
+        public ?string $excerpt,
         public string $content,
         public string $status,
         public ?string $publishedAt,
         public int $viewCount,
         public int $commentCount,
         public int $likeCount,
-        public string $created_at,
-        public string $updated_at,
+        public string $createdAt,
+        public string $updatedAt,
         public array $tags = [],
     ) {}
 }

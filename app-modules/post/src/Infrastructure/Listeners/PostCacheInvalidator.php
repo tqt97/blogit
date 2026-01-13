@@ -9,6 +9,7 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Events\Dispatcher;
 use Modules\Post\Domain\Events\PostCreated;
 use Modules\Post\Domain\Events\PostDeleted;
+use Modules\Post\Domain\Events\PostPublished;
 use Modules\Post\Domain\Events\PostsBulkDeleted;
 use Modules\Post\Domain\Events\PostTagsSynchronized;
 use Modules\Post\Domain\Events\PostUpdated;
@@ -39,6 +40,12 @@ final class PostCacheInvalidator
         $this->flushListCache();
     }
 
+    public function handlePostPublished(PostPublished $event): void
+    {
+        $this->cache->forget("{$this->prefix}find:{$event->id->value()}");
+        $this->flushListCache();
+    }
+
     public function handlePostTagsSync(PostTagsSynchronized $event): void
     {
         $this->cache->forget("{$this->prefix}find:{$event->postId}");
@@ -63,6 +70,7 @@ final class PostCacheInvalidator
     {
         $events->listen(PostCreated::class, [$this, 'handlePostCreation']);
         $events->listen(PostUpdated::class, [$this, 'handlePostUpdate']);
+        $events->listen(PostPublished::class, [$this, 'handlePostPublished']);
         $events->listen(PostTagsSynchronized::class, [$this, 'handlePostTagsSync']);
         $events->listen(PostDeleted::class, [$this, 'handlePostDeletion']);
         $events->listen(PostsBulkDeleted::class, [$this, 'handlePostsBulkDeletion']);

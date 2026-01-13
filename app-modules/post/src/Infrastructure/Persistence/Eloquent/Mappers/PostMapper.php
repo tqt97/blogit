@@ -31,10 +31,10 @@ final class PostMapper
         return Post::reconstitute(
             id: new PostId((int) $model->id),
             userId: new PostUserId((int) $model->user_id),
-            categoryId: new PostCategoryId((int) $model->category_id),
+            categoryId: $model->category_id ? new PostCategoryId((int) $model->category_id) : null,
             title: new PostTitle($model->title),
             slug: new PostSlug($model->slug),
-            excerpt: new PostExcerpt((string) $model->excerpt),
+            excerpt: $model->excerpt ? new PostExcerpt((string) $model->excerpt) : null,
             content: new PostContent($model->content),
             status: $status,
             viewCount: new PostViewCount((int) $model->views_count),
@@ -49,10 +49,10 @@ final class PostMapper
         $model ??= new PostModel;
 
         $model->user_id = $entity->userId()->value();
-        $model->category_id = $entity->categoryId()->value();
+        $model->category_id = $entity->categoryId()?->value();
         $model->title = $entity->title()->value();
         $model->slug = $entity->slug()->value();
-        $model->excerpt = $entity->excerpt()->value();
+        $model->excerpt = $entity->excerpt()?->value();
         $model->content = $entity->content()->value();
         $model->status = $entity->status();
         $model->views_count = $entity->viewCount()->value();

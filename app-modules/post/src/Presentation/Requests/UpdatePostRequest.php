@@ -20,10 +20,10 @@ class UpdatePostRequest extends FormRequest
 
         return [
             'user_id' => ['required', 'integer', 'exists:users,id'],
-            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', Rule::unique('posts', 'slug')->ignore($postId)],
-            'excerpt' => ['nullable', 'string', 'max:255'],
+            'excerpt' => ['nullable', 'string'],
             'content' => ['required', 'string'],
             'status' => ['required', 'string', 'max:255'],
             'published_at' => ['nullable', 'date'],

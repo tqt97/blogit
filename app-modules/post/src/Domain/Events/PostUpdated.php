@@ -10,5 +10,5 @@ use Modules\Post\Domain\ValueObjects\PostTitle;
 
 final readonly class PostUpdated
 {
-    public function __construct(public PostId $id, public PostTitle $title, PostSlug $slug) {}
+    public function __construct(public PostId $id, public PostTitle $title, public PostSlug $slug) {}
 }

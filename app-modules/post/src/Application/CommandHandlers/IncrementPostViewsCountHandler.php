@@ -14,7 +14,6 @@ final class IncrementPostViewsCountHandler
 
     public function handle(IncrementPostViewsCountCommand $command): void
     {
-        // No transaction needed for single atomic increment
         $this->repository->incrementViews(new PostId($command->id));
     }
 }

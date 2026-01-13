@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Post\Infrastructure\Providers;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
@@ -21,7 +23,7 @@ use Modules\Post\Infrastructure\Transaction\DbTransactionManager;
 use Modules\Post\Presentation\Policies\PostPolicy;
 use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
 
-class PostServiceProvider extends ServiceProvider
+final class PostServiceProvider extends ServiceProvider
 {
     public function register(): void
     {

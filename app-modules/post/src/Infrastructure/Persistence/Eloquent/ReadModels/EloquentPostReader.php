@@ -14,6 +14,7 @@ use Modules\Post\Domain\ValueObjects\Pagination;
 use Modules\Post\Domain\ValueObjects\PostStatus;
 use Modules\Post\Domain\ValueObjects\SearchTerm;
 use Modules\Post\Domain\ValueObjects\Sorting;
+use Modules\Post\Domain\ValueObjects\TrashedFilter;
 use Modules\Post\Infrastructure\Persistence\Eloquent\Models\PostModel;
 use Modules\Tag\Application\Ports\ReadModels\TagReadModel;
 
@@ -23,36 +24,41 @@ final class EloquentPostReader implements PostReadModel
         private readonly TagReadModel $tagReader,
     ) {}
 
-    public function paginate(?SearchTerm $search, Pagination $pagination, Sorting $sorting): LengthAwarePaginator
-    {
+    public function paginate(
+        ?SearchTerm $search,
+        Pagination $pagination,
+        Sorting $sorting,
+        TrashedFilter $trashed,
+        ?int $categoryId = null,
+        ?int $tagId = null,
+        ?int $authorId = null
+    ): LengthAwarePaginator {
         $query = PostModel::query()
-            ->select([
-                'id',
-                'title',
-                'slug',
-                'excerpt',
-                'content',
-                'status',
-                'views_count',
-                'comments_count',
-                'likes_count',
-                'published_at',
-                'created_at',
-                'updated_at',
-            ]);
+            ->search($search?->value)
+            ->byTag($tagId);
 
-        if ($search !== null) {
-            $s = $search->value;
-            $query->where(function ($q) use ($s) {
-                $q->where('title', 'like', "%{$s}%")
-                    ->orWhere('slug', 'like', "%{$s}%");
-            });
+        match ($trashed) {
+            TrashedFilter::Only => $query->onlyTrashed(),
+            TrashedFilter::With => $query->withTrashed(),
+            default => null,
+        };
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($authorId) {
+            $query->where('user_id', $authorId);
         }
 
         $paginator = $query
+            ->select([
+                'id', 'title', 'slug', 'excerpt', 'content', 'status',
+                'views_count', 'comments_count', 'likes_count',
+                'published_at', 'created_at', 'updated_at',
+            ])
             ->orderBy($sorting->field->value, $sorting->direction->value)
-            ->paginate(perPage: $pagination->perPage, page: $pagination->page)
-            ->withQueryString();
+            ->paginate(perPage: $pagination->perPage, page: $pagination->page);
 
         // Hydrate tags for the chunk
         $postIds = $paginator->getCollection()->pluck('id')->toArray();
@@ -87,6 +93,52 @@ final class EloquentPostReader implements PostReadModel
         $tagsByPost = $this->fetchTagsForPosts([$model->id]);
 
         return $this->mapToDTO($model, $tagsByPost[$model->id] ?? []);
+    }
+
+    public function findBySlug(string $slug): ?PostDTO
+    {
+        $model = PostModel::query()
+            ->where('slug', $slug)
+            ->first();
+
+        if (! $model) {
+            return null;
+        }
+
+        $tagsByPost = $this->fetchTagsForPosts([$model->id]);
+
+        return $this->mapToDTO($model, $tagsByPost[$model->id] ?? []);
+    }
+
+    public function getRelated(int $postId, int $limit = 4): array
+    {
+        $post = PostModel::find($postId);
+        if (! $post) {
+            return [];
+        }
+
+        $tagIds = DB::table('post_tag')->where('post_id', $postId)->pluck('tag_id');
+
+        $models = PostModel::query()
+            ->where('id', '!=', $postId)
+            ->where(function ($q) use ($post, $tagIds) {
+                $q->where('category_id', $post->category_id);
+
+                if ($tagIds->isNotEmpty()) {
+                    $q->orWhereIn('id', function ($sub) use ($tagIds) {
+                        $sub->select('post_id')
+                            ->from('post_tag')
+                            ->whereIn('tag_id', $tagIds);
+                    });
+                }
+            })
+            ->limit($limit)
+            ->get();
+
+        $postIds = $models->pluck('id')->toArray();
+        $tagsByPost = $this->fetchTagsForPosts($postIds);
+
+        return $models->map(fn ($m) => $this->mapToDTO($m, $tagsByPost[$m->id] ?? []))->toArray();
     }
 
     private function fetchTagsForPosts(array $postIds): array
@@ -127,15 +179,15 @@ final class EloquentPostReader implements PostReadModel
             id: (int) $model->id,
             title: (string) $model->title,
             slug: (string) $model->slug,
-            excerpt: (string) $model->excerpt,
+            excerpt: $model->excerpt ? (string) $model->excerpt : null,
             content: (string) $model->content,
             status: $model->status instanceof PostStatus ? $model->status->value : (string) $model->status,
             publishedAt: $this->formatDate($model->published_at),
             viewCount: (int) $model->views_count,
             commentCount: (int) $model->comments_count,
             likeCount: (int) $model->likes_count,
-            created_at: (string) $this->formatDate($model->created_at),
-            updated_at: (string) $this->formatDate($model->updated_at),
+            createdAt: (string) $this->formatDate($model->created_at),
+            updatedAt: (string) $this->formatDate($model->updated_at),
             tags: $tags
         );
     }

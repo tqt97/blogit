@@ -12,10 +12,10 @@ final class CreatePostCommandMapper
     {
         return new CreatePostCommand(
             userId: (int) $data['user_id'],
-            categoryId: (int) $data['category_id'],
+            categoryId: isset($data['category_id']) ? (int) $data['category_id'] : null,
             title: (string) $data['title'],
             slug: (string) $data['slug'],
-            excerpt: (string) ($data['excerpt'] ?? ''),
+            excerpt: isset($data['excerpt']) ? (string) $data['excerpt'] : null,
             content: (string) $data['content'],
             status: (string) $data['status'],
             viewCount: 0,

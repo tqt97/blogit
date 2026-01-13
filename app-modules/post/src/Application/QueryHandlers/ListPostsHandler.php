@@ -14,6 +14,14 @@ final class ListPostsHandler
 
     public function handle(ListPostsQuery $query): LengthAwarePaginator
     {
-        return $this->reader->paginate($query->search, $query->pagination, $query->sorting);
+        return $this->reader->paginate(
+            $query->search,
+            $query->pagination,
+            $query->sorting,
+            $query->trashed,
+            $query->categoryId,
+            $query->tagId,
+            $query->authorId
+        );
     }
 }

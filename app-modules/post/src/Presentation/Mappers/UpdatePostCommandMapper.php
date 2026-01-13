@@ -13,14 +13,14 @@ final class UpdatePostCommandMapper
         return new UpdatePostCommand(
             id: $id,
             userId: (int) $data['user_id'],
-            categoryId: (int) $data['category_id'],
+            categoryId: isset($data['category_id']) ? (int) $data['category_id'] : null,
             title: (string) $data['title'],
             slug: (string) $data['slug'],
-            excerpt: (string) ($data['excerpt'] ?? ''),
+            excerpt: isset($data['excerpt']) ? (string) $data['excerpt'] : null,
             content: (string) $data['content'],
             status: (string) $data['status'],
             publishedAt: isset($data['published_at']) ? (string) $data['published_at'] : null,
-            tagIds: $data['tags'] ?? []
+            tagIds: array_key_exists('tags', $data) ? $data['tags'] : null
         );
     }
 }

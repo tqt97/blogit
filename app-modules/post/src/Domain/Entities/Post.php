@@ -27,10 +27,10 @@ final class Post
     private function __construct(
         private readonly ?PostId $id,
         private PostUserId $userId,
-        private PostCategoryId $categoryId,
+        private ?PostCategoryId $categoryId,
         private PostTitle $title,
         private PostSlug $slug,
-        private PostExcerpt $excerpt,
+        private ?PostExcerpt $excerpt,
         private PostContent $content,
         private PostStatus $status,
         private PostViewCount $viewCount,
@@ -41,10 +41,10 @@ final class Post
 
     public static function create(
         PostUserId $userId,
-        PostCategoryId $categoryId,
+        ?PostCategoryId $categoryId,
         PostTitle $title,
         PostSlug $slug,
-        PostExcerpt $excerpt,
+        ?PostExcerpt $excerpt,
         PostContent $content,
         PostStatus $status,
         PostViewCount $viewCount,
@@ -58,10 +58,10 @@ final class Post
     public static function reconstitute(
         PostId $id,
         PostUserId $userId,
-        PostCategoryId $categoryId,
+        ?PostCategoryId $categoryId,
         PostTitle $title,
         PostSlug $slug,
-        PostExcerpt $excerpt,
+        ?PostExcerpt $excerpt,
         PostContent $content,
         PostStatus $status,
         PostViewCount $viewCount,
@@ -87,7 +87,7 @@ final class Post
         return $this->slug;
     }
 
-    public function excerpt(): PostExcerpt
+    public function excerpt(): ?PostExcerpt
     {
         return $this->excerpt;
     }
@@ -127,7 +127,7 @@ final class Post
         return $this->userId;
     }
 
-    public function categoryId(): PostCategoryId
+    public function categoryId(): ?PostCategoryId
     {
         return $this->categoryId;
     }
@@ -162,10 +162,10 @@ final class Post
 
     public function update(
         PostUserId $userId,
-        PostCategoryId $categoryId,
+        ?PostCategoryId $categoryId,
         PostTitle $title,
         PostSlug $slug,
-        PostExcerpt $excerpt,
+        ?PostExcerpt $excerpt,
         PostContent $content,
         PostStatus $status,
         PostPublishedAt $publishedAt,
@@ -190,7 +190,7 @@ final class Post
         $this->publishedAt = $publishedAt;
 
         if ($this->id) {
-            $this->record(new PostUpdated($this->id, $this->title, $this->slug));
+            $this->record(new \Modules\Post\Domain\Events\PostPublished($this->id, $this->publishedAt));
         }
     }
 

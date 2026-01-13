@@ -9,10 +9,10 @@ final readonly class CreatePostCommand
     /** @param int[] $tagIds */
     public function __construct(
         public int $userId,
-        public int $categoryId,
+        public ?int $categoryId,
         public string $title,
         public string $slug,
-        public string $excerpt,
+        public ?string $excerpt,
         public string $content,
         public string $status,
         public int $viewCount,

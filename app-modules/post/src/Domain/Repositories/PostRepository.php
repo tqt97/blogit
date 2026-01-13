@@ -19,6 +19,14 @@ interface PostRepository
 
     public function deleteMany(PostIds $ids): void;
 
+    public function restoreMany(PostIds $ids): void;
+
+    public function forceDeleteMany(PostIds $ids): void;
+
+    public function restore(PostId $id): void;
+
+    public function forceDelete(PostId $id): void;
+
     public function incrementViews(PostId $id): void;
 
     public function syncTags(PostId $id, PostTagIds $tags): bool;
