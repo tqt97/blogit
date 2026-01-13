@@ -1,0 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Tag\Application\Commands;
+
+final readonly class DeleteTagCommand
+{
+    public function __construct(public int $id) {}
+}

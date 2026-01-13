@@ -17,6 +17,8 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
+        "modules/post": "*",
+        "modules/tag": "*",
         "modules/access-controls": "*",
         "modules/categories": "*",
         "modules/roles": "*",

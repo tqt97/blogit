@@ -1,47 +1,35 @@
-import { Pagination } from '@/types/pagination';
-import { Link } from '@inertiajs/react';
-import { Button } from './ui/button';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+import { type PaginatedResponse } from '@/types';
 
-export default function TablePagination({
-    links,
-    total,
-    to,
-    from,
-}: Pagination) {
+export function TablePagination({ resource }: { resource: PaginatedResponse }) {
+    if (resource.last_page === 1) {
+        return (
+            <div className={'mt-4 text-center text-gray-500'}>
+                No more items to show.
+            </div>
+        );
+    }
+
     return (
-        <div className="flex items-center dark:bg-gray-900 flex flex-col justify-between gap-4 border-gray-200 bg-white px-3 py-3 sm:flex-row">
-            <div className="item-center flex justify-between">
-                <span className="text-sm text-muted-foreground">
-                    Showing {from} to {to} of {total} entries
-                </span>
-            </div>
-            <div className="flex items-center space-x-2">
-                {links.map((link, index) =>
-                    link.url != null ? (
-                        <Link href={link.url || '#'} key={index}>
-                            <Button
-                                variant={'outline'}
-                                className={
-                                    link.active
-                                        ? 'bg-gray-400 text-white dark:bg-gray-700 dark:text-gray-200 dark:border-gray-700'
-                                        : ''
-                                }
-                                size={'sm'}
-                                disabled={link.active}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        </Link>
-                    ) : (
-                        <Button
-                            key={index}
-                            variant={'outline'}
-                            size={'sm'}
-                            disabled
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                        />
-                    ),
-                )}
-            </div>
-        </div>
+        <Pagination className="mt-4">
+            <PaginationContent>
+                <PaginationItem>
+                    {resource.prev_page_url ? (
+                        <PaginationPrevious href={resource.prev_page_url} />
+                    ) : null}
+                </PaginationItem>
+                <PaginationItem>
+                    {resource.next_page_url ? (
+                        <PaginationNext href={resource.next_page_url} />
+                    ) : null}
+                </PaginationItem>
+            </PaginationContent>
+        </Pagination>
     );
 }
